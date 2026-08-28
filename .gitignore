@@ -1,0 +1,18 @@
+﻿# Dependências
+node_modules/
+
+# Build
+dist/
+dist-ssr/
+
+# Arquivos de ambiente e temporários
+.DS_Store
+*.local
+*.log
+*.zip
+*.jpeg
+*.jpg
+
+# IDEs
+.vscode/
+.idea/
