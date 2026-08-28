@@ -3,8 +3,8 @@ import { gradienteToon, OUTLINE_COR } from './materiais'
 
 /* =====================================================================
    GRÁFICOS EM 3D (usados nas fases 3 e 5) — ESTILO HUD DE JOGO
-   Painel translúcido chanfrado com moldura, eixos com pontas arredondadas
-   e marcadores luminosos com rastro.
+   Painel translúcido chanfrado com moldura simétrica, eixos com pontas
+   arredondadas e marcadores luminosos com rastro.
    ===================================================================== */
 
 /** Eixos do gráfico com pontas arredondadas e traços nítidos. */
@@ -135,20 +135,22 @@ export function MarcadorTempo({
   )
 }
 
-/** Placa de fundo do gráfico estilo "painel HUD de jogo". */
+/** Placa de fundo do gráfico estilo "painel HUD de jogo" com margem simétrica. */
 export function PlacaGrafico({
   largura,
   altura,
   corFase = '#655cd2',
+  padding = 1.2,
 }: {
   largura: number
   altura: number
   corFase?: string
+  padding?: number
 }) {
   return (
-    <group position={[largura / 2 - 0.6, altura / 2 - 0.6, -0.15]}>
+    <group position={[largura / 2, altura / 2, -0.15]}>
       <RoundedBox
-        args={[largura + 1.8, altura + 1.8, 0.1]}
+        args={[largura + padding * 2, altura + padding * 2, 0.1]}
         radius={0.16}
         smoothness={3}
       >
@@ -160,9 +162,9 @@ export function PlacaGrafico({
         />
         <Outlines thickness={2.5} color={OUTLINE_COR} />
       </RoundedBox>
-      {/* Friso luminoso do painel */}
+      {/* Friso luminoso sutil do painel */}
       <mesh position={[0, 0, 0.06]}>
-        <planeGeometry args={[largura + 1.6, altura + 1.6]} />
+        <planeGeometry args={[largura + (padding - 0.1) * 2, altura + (padding - 0.1) * 2]} />
         <meshBasicMaterial color={corFase} transparent opacity={0.06} />
       </mesh>
     </group>

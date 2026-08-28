@@ -226,7 +226,7 @@ function Conceito() {
           <Piso cor="#ded9ee" tamanho={80} y={-2.6} />
           <group position={[0, 0.4, 0]}>
             <PlacaGrafico largura={T_FIM * ESCALA_T} altura={PICO_F * ESCALA_F} corFase="#e0a324" />
-            <EixosGrafico largura={T_FIM * ESCALA_T + 1.4} altura={PICO_F * ESCALA_F + 1.2} />
+            <EixosGrafico largura={T_FIM * ESCALA_T} altura={PICO_F * ESCALA_F} />
             <BlocosArea fatias={fatias} />
             <ContornoGrafico />
           </group>
@@ -312,7 +312,7 @@ function Minijogo() {
           <Piso cor="#ded9ee" tamanho={80} y={-2.6} />
           <group position={[0, 0.4, 0]}>
             <PlacaGrafico largura={T_FIM * ESCALA_T} altura={PICO_F * ESCALA_F} corFase="#e0a324" />
-            <EixosGrafico largura={T_FIM * ESCALA_T + 1.4} altura={PICO_F * ESCALA_F + 1.2} />
+            <EixosGrafico largura={T_FIM * ESCALA_T} altura={PICO_F * ESCALA_F} />
             <ContornoGrafico />
             {/* retângulo montado pelo aluno com RoundedBox e Toon Shading */}
             <group

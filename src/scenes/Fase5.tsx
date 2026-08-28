@@ -318,7 +318,7 @@ function GraficoForca({ t }: { t: number }) {
   return (
     <group position={[-9.6, 2.4, -2.5]}>
       <PlacaGrafico largura={xFim} altura={yPico} corFase="#b5453f" />
-      <EixosGrafico largura={xFim + 0.8} altura={yPico + 0.8} marcasX={4} marcasY={2} />
+      <EixosGrafico largura={xFim} altura={yPico} marcasX={4} marcasY={2} />
       <SegmentoLinha a={[0, 0]} b={[xPico, yPico]} cor="#d94138" espessura={0.11} />
       <SegmentoLinha a={[xPico, yPico]} b={[xFim, 0]} cor="#d94138" espessura={0.11} />
       {/* Área percorrida com Toon Shading */}
@@ -342,7 +342,7 @@ function GraficoVelocidade({ t }: { t: number }) {
   return (
     <group position={[3.4, 2.4, -2.5]}>
       <PlacaGrafico largura={largura} altura={altura} corFase="#2f78b5" />
-      <EixosGrafico largura={largura + 0.8} altura={altura + 0.8} marcasX={5} marcasY={2} />
+      <EixosGrafico largura={largura} altura={altura} marcasX={5} marcasY={2} />
       <SegmentoLinha a={[0, altura]} b={[largura, 0]} cor="#2f78b5" espessura={0.11} />
       {t >= 20 && <MarcadorTempo x={xMarcador} altura={alturaMarcador} cor="#2f78b5" />}
     </group>

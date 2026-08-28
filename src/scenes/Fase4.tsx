@@ -16,17 +16,26 @@ import { gradienteToon, OUTLINE_COR } from '../components/materiais'
    FASE 4 — SISTEMAS ISOLADOS E CONSERVAÇÃO DA QUANTIDADE DE MOVIMENTO
    Sandbox sem atrito: dois corpos em repouso se empurram.
      Q_antes = 0  →  m₁·v₁ = m₂·v₂
-   Modo "patinadores" (personagens estilo chibi cartoon) e modo "explosão"
-   (bomba que se divide em dois fragmentos estilizados).
+   Modo "patinadores" (personagens estilo chibi cartoon em contato)
+   e modo "explosão" (bomba que se divide em dois fragmentos).
    ===================================================================== */
 
 type Modo = 'patinadores' | 'explosao'
 
+/** Calcula a meia-largura exata de cada corpo para ficarem em contato no início. */
+function meiaLarguraCorpo(massa: number, modo: Modo): number {
+  if (modo === 'explosao') {
+    const lado = 0.55 + massa * 0.05
+    return lado / 2
+  }
+  const escalaMassa = 0.85 + massa / 160
+  return 0.76 * escalaMassa
+}
+
 /* ------------------------------ 3D ---------------------------------- */
 
 /**
- * Patinador Chibi cartoon (cabeça grande expressiva, olhos, cachecol, luvas, lâmina de patins)
- * ou fragmento de explosão cartoon chanfrado com núcleo.
+ * Patinador Chibi cartoon ou fragmento de explosão cartoon chanfrado com núcleo.
  */
 function Corpo({
   massa,
@@ -57,7 +66,7 @@ function Corpo({
   }
 
   // Patinador Chibi
-  const escalaMassa = 0.85 + massa / 160 // leve variação conforme a massa
+  const escalaMassa = 0.85 + massa / 160
   const corCachecol = espelhado ? '#e0a324' : '#ffffff'
   const corLuva = '#221e33'
   const corCabelo = espelhado ? '#5c3a21' : '#b5835a'
@@ -78,7 +87,7 @@ function Corpo({
         </RoundedBox>
       </group>
 
-      {/* Pernas / Calça Chibi (tom mais escuro) */}
+      {/* Pernas / Calça Chibi */}
       <mesh position={[0, 0.38, 0]}>
         <cylinderGeometry args={[0.22, 0.24, 0.4, 14]} />
         <meshToonMaterial gradientMap={gradienteToon} color="#28243d" />
@@ -119,14 +128,13 @@ function Corpo({
           <meshToonMaterial gradientMap={gradienteToon} color={corCabelo} />
         </mesh>
 
-        {/* Olhos expressivos (olhando para o centro de impulso) */}
-        <group position={[0, 0, 0.35]}>
+        {/* Olhos expressivos olhando para o parceiro no centro */}
+        <group position={[espelhado ? 0.04 : -0.04, 0, 0.35]}>
           {/* Olho esquerdo */}
           <mesh position={[-0.14, 0, 0]}>
             <sphereGeometry args={[0.055, 12, 10]} />
             <meshBasicMaterial color="#1a1730" />
           </mesh>
-          {/* Brilho do olho esquerdo */}
           <mesh position={[-0.12, 0.02, 0.035]}>
             <sphereGeometry args={[0.018, 8, 8]} />
             <meshBasicMaterial color="#ffffff" />
@@ -137,7 +145,6 @@ function Corpo({
             <sphereGeometry args={[0.055, 12, 10]} />
             <meshBasicMaterial color="#1a1730" />
           </mesh>
-          {/* Brilho do olho direito */}
           <mesh position={[0.16, 0.02, 0.035]}>
             <sphereGeometry args={[0.018, 8, 8]} />
             <meshBasicMaterial color="#ffffff" />
@@ -145,16 +152,19 @@ function Corpo({
         </group>
       </group>
 
-      {/* Braço e mão/luva empurrando */}
-      <group position={[espelhado ? -0.32 : 0.32, 0.82, 0.08]} rotation={[0, 0, espelhado ? 0.3 : -0.3]}>
+      {/* Braço e mão/luva apontando para o centro (direção do empurrão) */}
+      <group
+        position={[espelhado ? 0.32 : -0.32, 0.82, 0.08]}
+        rotation={[0, 0, espelhado ? -0.3 : 0.3]}
+      >
         {/* Manga */}
-        <mesh position={[espelhado ? -0.16 : 0.16, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <mesh position={[espelhado ? 0.16 : -0.16, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[0.09, 0.11, 0.38, 12]} />
           <meshToonMaterial gradientMap={gradienteToon} color={cor} />
           <Outlines thickness={2} color={OUTLINE_COR} />
         </mesh>
         {/* Luva / Mãozinha arredondada */}
-        <mesh position={[espelhado ? -0.36 : 0.36, 0, 0]}>
+        <mesh position={[espelhado ? 0.36 : -0.36, 0, 0]}>
           <sphereGeometry args={[0.11, 12, 10]} />
           <meshToonMaterial gradientMap={gradienteToon} color={corLuva} />
           <Outlines thickness={2} color={OUTLINE_COR} />
@@ -190,19 +200,23 @@ function CenaConservacao({
   const x = useRef(0)
   const acabou = useRef(false)
 
+  const meiaDir = meiaLarguraCorpo(m1, modo)
+  const meiaEsq = meiaLarguraCorpo(m2, modo)
+  const contato = 0.98
+
   useEffect(() => {
     x.current = 0
     acabou.current = false
-    if (dir.current) dir.current.position.x = 1.1
-    if (esq.current) esq.current.position.x = -1.1
-  }, [rodando, m1, m2, v1, v2, modo])
+    if (dir.current) dir.current.position.x = meiaDir * contato
+    if (esq.current) esq.current.position.x = -meiaEsq * contato
+  }, [rodando, m1, m2, v1, v2, modo, meiaDir, meiaEsq])
 
   useFrame((_, delta) => {
     if (!rodando) return
     const dt = Math.min(delta, 0.05)
     x.current += dt
-    if (dir.current) dir.current.position.x = 1.1 + v1 * x.current * escalaMov
-    if (esq.current) esq.current.position.x = -1.1 - v2 * x.current * escalaMov
+    if (dir.current) dir.current.position.x = meiaDir * contato + v1 * x.current * escalaMov
+    if (esq.current) esq.current.position.x = -meiaEsq * contato - v2 * x.current * escalaMov
     if (x.current * escalaMov * Math.max(v1, v2) > 9 && !acabou.current) {
       acabou.current = true
       onFim?.()
@@ -230,12 +244,12 @@ function CenaConservacao({
         <meshStandardMaterial color="#b3aacd" />
       </mesh>
 
-      <group ref={dir} position={[1.1, 0, 0]}>
+      <group ref={dir} position={[meiaDir * contato, 0, 0]}>
         <Corpo massa={m1} cor="#2f78b5" modo={modo} />
         <Vetor origem={[0, modo === 'explosao' ? 1.6 : 2.5, 0]} comprimento={compQ1} cor="#2f78b5" />
       </group>
 
-      <group ref={esq} position={[-1.1, 0, 0]}>
+      <group ref={esq} position={[-meiaEsq * contato, 0, 0]}>
         <Corpo massa={m2} cor="#d94138" modo={modo} espelhado />
         <Vetor origem={[0, modo === 'explosao' ? 1.6 : 2.5, 0]} comprimento={-compQ2} cor="#d94138" />
       </group>
