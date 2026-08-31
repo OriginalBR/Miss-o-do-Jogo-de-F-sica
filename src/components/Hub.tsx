@@ -230,7 +230,7 @@ export function Hub() {
   const pontos = pontuacaoTotal(progresso)
 
   return (
-    <div className="relative flex-1 overflow-hidden">
+    <div className="relative h-full w-full flex-1 overflow-hidden bg-papelFundo">
       <Palco3D camera={[0, 5, 14]} alvo={[0, 1.8, -2]} fundo="#e6e2f4">
         <SalaLaboratorio />
         {FASES.map((fase, i) => (

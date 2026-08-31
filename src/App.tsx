@@ -4,6 +4,7 @@ import { TelaLoginAluno } from './components/TelaLoginAluno'
 import { TelaSenhaProfessora } from './components/TelaSenhaProfessora'
 import { DashboardProfessora } from './components/DashboardProfessora'
 import { Hub } from './components/Hub'
+import { HUD } from './components/HUD'
 import { TelaResultado } from './components/TelaResultado'
 import Fase1 from './scenes/Fase1'
 import Fase2 from './scenes/Fase2'
@@ -13,10 +14,9 @@ import Fase5 from './scenes/Fase5'
 
 /* =====================================================================
    APLICAÇÃO PRINCIPAL — Laboratório de Física 3D
-   Roteamento:
-   - Alunos: Entrada com Nome + Sala (1°A, 1°B, 1°C) -> Hub 3D -> Fases
-   - Professora Jaque: Área Restrita via URL (/dashboard, /admin, #/dashboard)
-     ou atalho de teclado (Ctrl+Alt+P). Exige senha docente.
+   - Container raiz 100vw / 100vh flexível (evita colapso do Canvas 3D)
+   - Renderização do HUD nas fases
+   - Roteamento inteligente de alunos e docente
    ===================================================================== */
 
 function CenaFase({ id }: { id: number }) {
@@ -79,27 +79,40 @@ export default function App() {
     return () => window.removeEventListener('keydown', tratarTeclado)
   }, [abrirDashboard])
 
-  // Roteador de telas
-  if (tela === 'dashboard') {
-    return <DashboardProfessora />
+  // Função para renderizar o conteúdo da tela ativa
+  function renderizarConteudo() {
+    if (tela === 'dashboard') {
+      return <DashboardProfessora />
+    }
+
+    if (tela === 'senha-professora') {
+      return <TelaSenhaProfessora />
+    }
+
+    if (!alunoAtual || tela === 'login') {
+      return <TelaLoginAluno />
+    }
+
+    switch (tela) {
+      case 'hub':
+        return <Hub />
+      case 'fase':
+        return (
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            <HUD />
+            <CenaFase id={faseAtual} />
+          </div>
+        )
+      case 'resultado':
+        return <TelaResultado />
+      default:
+        return <Hub />
+    }
   }
 
-  if (tela === 'senha-professora') {
-    return <TelaSenhaProfessora />
-  }
-
-  if (!alunoAtual || tela === 'login') {
-    return <TelaLoginAluno />
-  }
-
-  switch (tela) {
-    case 'hub':
-      return <Hub />
-    case 'fase':
-      return <CenaFase id={faseAtual} />
-    case 'resultado':
-      return <TelaResultado />
-    default:
-      return <Hub />
-  }
+  return (
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-papelFundo select-none">
+      {renderizarConteudo()}
+    </div>
+  )
 }
