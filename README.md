@@ -1,4 +1,4 @@
-# Laboratório de Física 3D — Potência, Impulso e Quantidade de Movimento
+# Laboratório de Física dos Primeiros Anos — Potência, Impulso e Quantidade de Movimento
 
 Jogo educativo 3D em português para o 1º ano do Ensino Médio, cobrindo as Aulas 1 a 5 da apostila:
 potência média e instantânea, quantidade de movimento, impulso (força constante e variável),

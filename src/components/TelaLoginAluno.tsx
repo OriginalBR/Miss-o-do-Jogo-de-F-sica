@@ -71,10 +71,10 @@ export function TelaLoginAluno() {
             ⚛️
           </div>
           <span className="mt-3 inline-block font-mono text-xs font-semibold uppercase tracking-widest text-pigmento">
-            Laboratório 3D de Física · 1º Ano
+            Física · Ensino Médio
           </span>
           <h1 className="mt-1 font-titulo text-2xl font-bold tracking-tight text-tinta sm:text-3xl">
-            Missão de Física
+            Laboratório de Física dos Primeiros Anos
           </h1>
           <p className="mt-1.5 text-sm text-tintaFraca">
             Potência, Impulso e Quantidade de Movimento
@@ -200,7 +200,10 @@ export function TelaLoginAluno() {
         {/* Rodapé discreto com atalho sutil para a coordenação */}
         <div className="mt-6 border-t border-linha/40 pt-3 text-center">
           <p className="text-[11px] text-tintaFraca/60">
-            Escola · 1º Ano do Ensino Médio · Física 3D
+            Escola · 1º Ano do Ensino Médio · Laboratório de Física dos Primeiros Anos
+          </p>
+          <p className="mt-1 font-mono text-[11px] font-semibold text-pigmento">
+            Feito por Diogo Rodrigo - 1°B
           </p>
         </div>
       </div>

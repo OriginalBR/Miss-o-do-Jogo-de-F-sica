@@ -46,7 +46,7 @@ export function TelaResultado() {
       ? 'Placar perfeito! Você dominou potência, impulso e conservação da quantidade de movimento.'
       : concluidas === FASES.length
         ? 'Todas as 5 estações foram concluídas! Você pode refazer os quizzes para buscar a pontuação máxima.'
-        : 'Ainda há estações pendentes no laboratório 3D.'
+        : 'Ainda há estações pendentes no Laboratório de Física dos Primeiros Anos.'
 
   return (
     <div className="flex-1 overflow-y-auto bg-papelFundo">
@@ -187,6 +187,13 @@ export function TelaResultado() {
           <Botao tamanho="md" variante="secundario" onClick={reiniciarTudo}>
             Zerar e Recomeçar
           </Botao>
+        </div>
+
+        {/* Rodapé de Crédito */}
+        <div className="mt-10 border-t border-linha/60 pt-4 text-center">
+          <p className="font-mono text-xs font-semibold text-tintaFraca">
+            Feito por Diogo Rodrigo - 1°B
+          </p>
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@ import Fase4 from './scenes/Fase4'
 import Fase5 from './scenes/Fase5'
 
 /* =====================================================================
-   APLICAÇÃO PRINCIPAL — Laboratório de Física 3D
+   APLICAÇÃO PRINCIPAL — Laboratório de Física dos Primeiros Anos
    - Container raiz 100vw / 100vh flexível (evita colapso do Canvas 3D)
    - Renderização do HUD nas fases
    - Roteamento inteligente de alunos e docente
@@ -111,8 +111,14 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-papelFundo select-none">
+    <div className="relative flex h-screen w-screen flex-col overflow-hidden bg-papelFundo select-none">
       {renderizarConteudo()}
+
+      {/* Marca d'água permanente na parte inferior */}
+      <footer className="pointer-events-none fixed bottom-2 right-2.5 z-50 flex items-center gap-1.5 rounded-full border border-linha/70 bg-papel/85 px-3 py-1 font-mono text-[11px] font-semibold text-tintaFraca/85 shadow-leve backdrop-blur-md">
+        <span className="text-pigmento">⚡</span>
+        <span>Feito por Diogo Rodrigo - 1°B</span>
+      </footer>
     </div>
   )
 }

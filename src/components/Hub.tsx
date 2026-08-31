@@ -251,7 +251,7 @@ export function Hub() {
         <div className="pointer-events-auto flex flex-wrap items-start justify-between gap-2.5">
           <div className="max-w-xs sm:max-w-sm rounded-2xl border border-linha/80 bg-papel/95 p-3.5 sm:p-4 shadow-media backdrop-blur-md">
             <div className="flex items-center justify-between">
-              <p className="etiqueta text-[10px]">Laboratório de Física · 1º ano</p>
+              <p className="etiqueta text-[10px]">Laboratório de Física dos Primeiros Anos</p>
               {alunoAtual && (
                 <span className="rounded-md bg-pigmentoClaro px-1.5 py-0.5 font-mono text-[10px] font-bold text-pigmentoEscuro">
                   {alunoAtual.turma}

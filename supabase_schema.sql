@@ -1,5 +1,5 @@
 -- =====================================================================
--- SCHEMA SUPABASE: Laboratório de Física 3D (Professora Jaque)
+-- SCHEMA SUPABASE: Laboratório de Física dos Primeiros Anos (Professora Jaque)
 -- Cole este script no SQL Editor do seu projeto Supabase e clique em "Run".
 -- =====================================================================
 
