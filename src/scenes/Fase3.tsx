@@ -15,13 +15,8 @@ import { gradienteToon, OUTLINE_COR } from '../components/materiais'
 
 /* =====================================================================
    FASE 3 — IMPULSO DE FORÇA VARIÁVEL (gráfico F × t)
-   O gráfico do exercício (FGV): a força sobe de 0 a 8,0 N em 0,20 s e
-   volta a zero em 0,60 s. Área = (0,60 · 8,0)/2 = 2,4 N·s.
-   Bólido de 100 g partindo do repouso → v = 2,4 / 0,1 = 24 m/s.
-
-   Na cena de conceito o aluno "constrói" a área empilhando blocos
-   (soma de Riemann visual). No mini-jogo ele monta um retângulo de área
-   equivalente à do triângulo.
+   O gráfico do exercício (FGV): força sobe a 8 N em 0,20 s e zera em 0,60 s.
+   Área = (0,60 · 8,0)/2 = 2,4 N·s.
    ===================================================================== */
 
 const PICO_F = 8.0 // N
@@ -31,11 +26,9 @@ const MASSA_BOLIDO = 0.1 // kg (100 g)
 const AREA_EXATA = (T_FIM * PICO_F) / 2 // 2,4 N·s
 const V_ALVO = AREA_EXATA / MASSA_BOLIDO // 24 m/s
 
-// Escalas: converte segundos e newtons em unidades da cena
-const ESCALA_T = 20 // 0,60 s → 12 unidades
-const ESCALA_F = 0.5 // 8,0 N → 4 unidades
+const ESCALA_T = 20
+const ESCALA_F = 0.5
 
-/** Força no instante t, segundo o gráfico do exercício. */
 function forcaEm(t: number): number {
   if (t <= 0) return 0
   if (t <= T_PICO) return (PICO_F * t) / T_PICO
@@ -43,7 +36,6 @@ function forcaEm(t: number): number {
   return 0
 }
 
-/** Soma de Riemann pelo ponto médio de cada fatia. */
 function somaRiemann(fatias: number): number {
   const larguraFatia = T_FIM / fatias
   let soma = 0
@@ -55,7 +47,6 @@ function somaRiemann(fatias: number): number {
 
 /* ------------------------------ 3D ---------------------------------- */
 
-/** Contorno do gráfico triangular F × t. */
 function ContornoGrafico() {
   const xPico = T_PICO * ESCALA_T
   const yPico = PICO_F * ESCALA_F
@@ -68,7 +59,6 @@ function ContornoGrafico() {
   )
 }
 
-/** Blocos (prismas) que aproximam a área sob a curva com Toon Shading e RoundedBox. */
 function BlocosArea({ fatias }: { fatias: number }) {
   const larguraFatia = T_FIM / fatias
   return (
@@ -102,7 +92,6 @@ function BlocosArea({ fatias }: { fatias: number }) {
   )
 }
 
-/** Roda pequena animada do bólido */
 function RodaBolido({ dx, dz, rotY }: { dx: number; dz: number; rotY: number }) {
   return (
     <group position={[dx, 0.14, dz]} rotation={[Math.PI / 2, 0, 0]}>
@@ -112,7 +101,6 @@ function RodaBolido({ dx, dz, rotY }: { dx: number; dz: number; rotY: number }) 
           <meshToonMaterial gradientMap={gradienteToon} color="#221e33" />
           <Outlines thickness={2} color={OUTLINE_COR} />
         </mesh>
-        {/* Aro interno com raios */}
         <mesh position={[0, 0.052, 0]}>
           <boxGeometry args={[0.03, 0.01, 0.22]} />
           <meshToonMaterial gradientMap={gradienteToon} color="#ffffff" />
@@ -138,7 +126,6 @@ function RodaBolido({ dx, dz, rotY }: { dx: number; dz: number; rotY: number }) 
   )
 }
 
-/** Carrinho de brinquedo que recebe o impulso com rodas animadas e RoundedBox. */
 function Bolido({
   velocidade,
   rodando,
@@ -179,7 +166,6 @@ function Bolido({
 
   return (
     <group ref={grupo} position={[0, posicaoY, 0]}>
-      {/* Chassi do bólido (dois tons: tom escuro na base, vibrante em cima) */}
       <RoundedBox args={[1.3, 0.18, 0.72]} radius={0.06} smoothness={3} position={[0, 0.18, 0]}>
         <meshToonMaterial gradientMap={gradienteToon} color="#9e6e18" />
         <Outlines thickness={2.5} color={OUTLINE_COR} />
@@ -190,13 +176,11 @@ function Bolido({
         <Outlines thickness={2.5} color={OUTLINE_COR} />
       </RoundedBox>
 
-      {/* Cabine com RoundedBox */}
       <RoundedBox args={[0.55, 0.26, 0.54]} radius={0.06} smoothness={3} position={[-0.1, 0.62, 0]}>
         <meshToonMaterial gradientMap={gradienteToon} color="#f5cb78" />
         <Outlines thickness={2.5} color={OUTLINE_COR} />
       </RoundedBox>
 
-      {/* 4 Rodas animadas */}
       {[
         [0.38, 0.36],
         [0.38, -0.36],
@@ -230,7 +214,6 @@ function Conceito() {
             <BlocosArea fatias={fatias} />
             <ContornoGrafico />
           </group>
-          {/* pista embaixo do gráfico com o bólido recebendo o impulso */}
           <group position={[0, -2.6, 3.2]}>
             <mesh rotation={[-Math.PI / 2, 0, 0]} position={[7, 0.01, 0]}>
               <planeGeometry args={[22, 1.6]} />
@@ -244,7 +227,7 @@ function Conceito() {
         <PainelConceito
           fase={fase}
           leituras={
-            <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+            <div className="grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-papel p-3 shadow-leve">
               <Leitura rotulo="Fatias" valor={fatias} />
               <Leitura rotulo="Soma das áreas" valor={soma.toFixed(3)} unidade="N·s" destaque />
               <Leitura rotulo="Área exata" valor={AREA_EXATA.toFixed(2)} unidade="N·s" />
@@ -259,13 +242,10 @@ function Conceito() {
             max={14}
             passo={1}
             onChange={setFatias}
-            ajuda="Cada bloco é um impulso F · Δt. Quanto mais fatias, mais a soma se aproxima da área do triângulo."
+            ajuda="Quanto mais blocos, mais a soma converge para a área do triângulo."
           />
-          <p className="rounded-lg bg-papelFundo px-4 py-3 font-mono text-sm leading-relaxed text-tinta">
-            Gráfico: pico de {PICO_F.toFixed(1)} N em {T_PICO.toFixed(2)} s, zera em{' '}
-            {T_FIM.toFixed(2)} s.
-            <br />
-            Bólido: {MASSA_BOLIDO * 1000} g → v = I ÷ m ={' '}
+          <p className="rounded-lg bg-papelFundo px-3 py-2 font-mono text-xs leading-relaxed text-tinta">
+            Área = (0,60 × 8,0) ÷ 2 = 2,40 N·s → v = I ÷ m ={' '}
             <strong className="text-pigmento">{velocidade.toFixed(1)} m/s</strong>
           </p>
         </PainelConceito>
@@ -314,7 +294,6 @@ function Minijogo() {
             <PlacaGrafico largura={T_FIM * ESCALA_T} altura={PICO_F * ESCALA_F} corFase="#e0a324" />
             <EixosGrafico largura={T_FIM * ESCALA_T} altura={PICO_F * ESCALA_F} />
             <ContornoGrafico />
-            {/* retângulo montado pelo aluno com RoundedBox e Toon Shading */}
             <group
               position={[
                 (base * ESCALA_T) / 2,
@@ -341,7 +320,6 @@ function Minijogo() {
               </RoundedBox>
             </group>
           </group>
-          {/* pista do lançamento */}
           <group position={[0, -2.6, 3.4]}>
             <mesh rotation={[-Math.PI / 2, 0, 0]} position={[7, 0.01, 0]}>
               <planeGeometry args={[24, 1.8]} />
@@ -358,25 +336,24 @@ function Minijogo() {
         </Palco3D>
       }
       sobreposicao={
-        <div className="rounded-xl bg-papel/95 px-4 py-2.5 text-center shadow-leve">
-          <span className="etiqueta">Monte um retângulo com o mesmo impulso do triângulo</span>
+        <div className="rounded-xl border border-linha/80 bg-papel/90 px-3 py-1.5 text-center shadow-leve backdrop-blur-md">
+          <span className="etiqueta text-[10px]">Área-Alvo: 2,40 N·s (Equivalente ao Triângulo)</span>
         </div>
       }
       painel={
         <>
           <div>
-            <TituloBloco passo="2.">{fase.minijogo}</TituloBloco>
-            <p className="mt-2 max-w-[52ch] text-base text-tinta">
-              O gráfico vermelho é o do exercício: pico de 8,0 N em 0,20 s e zero em 0,60 s.
-              Ajuste a base e a altura do bloco azul até ele ter a mesma área (o mesmo impulso).
+            <TituloBloco passo="2">{fase.minijogo}</TituloBloco>
+            <p className="mt-1 text-xs sm:text-sm text-tinta">
+              Ajuste a base (Δt) e a altura (F) do bloco azul até obter a mesma área do triângulo.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-4 gap-y-5 rounded-2xl bg-papel p-4 shadow-leve">
-            <Leitura rotulo="Área do seu bloco" valor={area.toFixed(2)} unidade="N·s" destaque />
-            <Leitura rotulo="Massa do bólido" valor="100" unidade="g" />
+          <div className="grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-papel p-3 shadow-leve">
+            <Leitura rotulo="Área do bloco" valor={area.toFixed(2)} unidade="N·s" destaque />
+            <Leitura rotulo="Massa" valor="100" unidade="g" />
             <Leitura rotulo="v prevista" valor={vPrevista.toFixed(1)} unidade="m/s" />
-            <Leitura rotulo="Situação" valor={dentro ? 'áreas iguais' : 'ainda diferente'} />
+            <Leitura rotulo="Status" valor={dentro ? 'Áreas iguais' : 'Diferente'} />
           </div>
 
           <ControleSlider
@@ -406,24 +383,24 @@ function Minijogo() {
               setEstado('ajustando')
             }}
             desabilitado={estado === 'lancando' || venceu}
-            ajuda="Existe mais de uma resposta certa: o que importa é o produto base × altura."
+            ajuda="O produto base × altura deve resultar em 2,40 N·s."
           />
 
           {!venceu && (
             <Botao
               larguraTotal
-              tamanho="lg"
+              tamanho="md"
               onClick={lancar}
               desabilitado={estado === 'lancando'}
             >
-              {estado === 'lancando' ? 'Lançando...' : 'Lançar o bólido'}
+              {estado === 'lancando' ? 'Lançando...' : 'Lançar Bólido'}
             </Botao>
           )}
 
           {estado === 'erro' && (
-            <FaixaFeedback tipo="erro" titulo="Impulso diferente do gráfico">
-              <p className="font-mono text-sm leading-relaxed">
-                Área do triângulo = (base × altura) ÷ 2 = (0,60 × 8,0) ÷ 2 = 2,40 N·s.
+            <FaixaFeedback tipo="erro" titulo="Impulso diferente">
+              <p className="font-mono text-xs leading-relaxed">
+                Triângulo = (0,60 × 8,0) ÷ 2 = 2,40 N·s.
                 <br />
                 Seu bloco: {base.toFixed(2)} × {altura.toFixed(1)} = {area.toFixed(2)} N·s.
               </p>
@@ -432,14 +409,14 @@ function Minijogo() {
 
           {venceu && (
             <>
-              <FaixaFeedback tipo="acerto" titulo="Área equivalente encontrada!">
-                <p className="font-mono text-sm leading-relaxed">
+              <FaixaFeedback tipo="acerto" titulo="Área Equivalente!">
+                <p className="font-mono text-xs leading-relaxed">
                   I = 2,40 N·s → v = I ÷ m = 2,40 ÷ 0,10 = {V_ALVO.toFixed(0)} m/s. +20 pontos.
                 </p>
               </FaixaFeedback>
               <Divisor />
-              <Botao larguraTotal tamanho="lg" onClick={avancarEtapa}>
-                Ir para o quiz →
+              <Botao larguraTotal tamanho="md" onClick={avancarEtapa}>
+                Ir para o Quiz →
               </Botao>
             </>
           )}

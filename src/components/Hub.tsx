@@ -17,6 +17,7 @@ import { gradienteToon, OUTLINE_COR } from './materiais'
 /* =====================================================================
    HUB — o laboratório de física em 3D (Estilo Cartoon / Cel-Shading)
    Cinco portais, um por fase com contornos e luzinhas decorativas.
+   Interface 2D compacta e responsiva.
    ===================================================================== */
 
 const POSICOES: [number, number][] = [
@@ -126,13 +127,11 @@ function Portal({
         }
       }}
     >
-      {/* Base chanfrada do portal com Outlines */}
       <RoundedBox args={[3, 0.32, 1.6]} radius={0.08} smoothness={3} position={[0, 0.16, 0]}>
         <meshToonMaterial gradientMap={gradienteToon} color={corMoldura} />
         <Outlines thickness={2.5} color={OUTLINE_COR} />
       </RoundedBox>
 
-      {/* Bandeirolas / luzinhas decorativas na base do portal na cor da fase */}
       {[-1.1, 1.1].map((x, idx) => (
         <group key={idx} position={[x, 0.42, 0.5]}>
           <mesh>
@@ -147,7 +146,6 @@ function Portal({
         </group>
       ))}
 
-      {/* Moldura do portal com RoundedBox e Outlines */}
       {[-1.24, 1.24].map((x) => (
         <RoundedBox
           key={x}
@@ -170,7 +168,6 @@ function Portal({
         <Outlines thickness={2.5} color={OUTLINE_COR} />
       </RoundedBox>
 
-      {/* "Vidro" holográfico do portal com Toon Shading */}
       <mesh position={[0, 1.9, 0]}>
         <planeGeometry args={[2.24, 3.4]} />
         <meshToonMaterial
@@ -181,12 +178,10 @@ function Portal({
         />
       </mesh>
 
-      {/* Numeral romano */}
       <group position={[0, 2.9, 0.05]}>
         <NumeroRomano marcador={fase.marcador} cor={corMoldura} />
       </group>
 
-      {/* Cristal flutuante giratório indica fase liberada e não concluída */}
       {liberada && !concluida && (
         <mesh ref={esferaAtiva} position={[0, 1.1, 0.25]}>
           <octahedronGeometry args={[0.32, 0]} />
@@ -195,7 +190,6 @@ function Portal({
         </mesh>
       )}
 
-      {/* Cubo de troféu dourado para fase concluída com Outlines */}
       {concluida && (
         <RoundedBox ref={troféu} args={[0.5, 0.5, 0.5]} radius={0.06} smoothness={3} position={[0, 4.2, 0]}>
           <meshToonMaterial gradientMap={gradienteToon} color="#e0a324" />
@@ -203,7 +197,6 @@ function Portal({
         </RoundedBox>
       )}
 
-      {/* Barra de "trancado" chanfrada com Outlines */}
       {!liberada && (
         <RoundedBox
           args={[2.5, 0.22, 0.1]}
@@ -224,9 +217,11 @@ function Portal({
 export function Hub() {
   const progresso = useGameStore((s) => s.progresso)
   const modoLivre = useGameStore((s) => s.modoLivre)
+  const alunoAtual = useGameStore((s) => s.alunoAtual)
   const abrirFase = useGameStore((s) => s.abrirFase)
   const verResultado = useGameStore((s) => s.verResultado)
   const alternarModoLivre = useGameStore((s) => s.alternarModoLivre)
+  const trocarAluno = useGameStore((s) => s.trocarAluno)
   const reiniciarTudo = useGameStore((s) => s.reiniciarTudo)
 
   const [confirmandoReset, setConfirmandoReset] = useState(false)
@@ -250,34 +245,56 @@ export function Hub() {
         ))}
       </Palco3D>
 
-      {/* --------------------- interface 2D sobreposta --------------------- */}
-      <div className="pointer-events-none absolute inset-0 flex flex-col justify-between gap-4 p-4 sm:p-6">
-        <div className="pointer-events-auto max-w-md rounded-2xl bg-papel/95 p-5 shadow-media backdrop-blur-md">
-          <p className="etiqueta">Laboratório de Física · 1º ano</p>
-          <h1 className="mt-1 font-titulo text-xl font-bold leading-tight text-tinta">
-            Potência, impulso e quantidade de movimento
-          </h1>
-          <p className="mt-2 max-w-[46ch] text-sm text-tintaFraca">
-            Cinco estações. Em cada uma: entender o conceito, jogar e resolver o quiz.
-          </p>
-
-          <div className="mt-5 flex items-center gap-4">
-            <div className="flex-1">
-              <BarraProgresso valor={concluidas / FASES.length} />
+      {/* --------------------- Interface 2D Sobreposta Compacta --------------------- */}
+      <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-3 sm:p-5">
+        {/* Barra Superior Compacta */}
+        <div className="pointer-events-auto flex flex-wrap items-start justify-between gap-2.5">
+          <div className="max-w-xs sm:max-w-sm rounded-2xl border border-linha/80 bg-papel/95 p-3.5 sm:p-4 shadow-media backdrop-blur-md">
+            <div className="flex items-center justify-between">
+              <p className="etiqueta text-[10px]">Laboratório de Física · 1º ano</p>
+              {alunoAtual && (
+                <span className="rounded-md bg-pigmentoClaro px-1.5 py-0.5 font-mono text-[10px] font-bold text-pigmentoEscuro">
+                  {alunoAtual.turma}
+                </span>
+              )}
             </div>
-            <span className="numeros shrink-0 font-mono text-sm font-semibold text-tinta">
-              {concluidas}/{FASES.length}
-            </span>
+
+            <h1 className="mt-1 font-titulo text-sm sm:text-base font-bold leading-snug text-tinta">
+              Potência, Impulso & Q
+            </h1>
+
+            <div className="mt-2.5 flex items-center gap-3">
+              <div className="flex-1">
+                <BarraProgresso valor={concluidas / FASES.length} altura={5} />
+              </div>
+              <span className="numeros font-mono text-xs font-bold text-tinta">
+                {concluidas}/{FASES.length}
+              </span>
+              <span className="numeros font-mono text-xs font-bold text-pigmento">
+                {pontos} pts
+              </span>
+            </div>
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="numeros font-mono text-lg font-semibold text-pigmento">{pontos}</span>
-            <span className="text-sm text-tintaFraca">pontos acumulados</span>
-          </div>
+
+          {/* Botão de Trocar de Aluno */}
+          {alunoAtual && (
+            <button
+              onClick={trocarAluno}
+              title="Trocar de Aluno"
+              className="flex h-9 items-center gap-1.5 rounded-xl border border-linha bg-papel/95 px-3 text-xs font-semibold text-tinta shadow-leve backdrop-blur-sm transition-transform hover:scale-105"
+            >
+              <span>{alunoAtual.avatar}</span>
+              <span className="max-w-[90px] truncate font-bold">
+                {alunoAtual.nome.split(' ')[0]}
+              </span>
+              <span className="font-mono text-[10px] text-tintaFraca">({alunoAtual.turma})</span>
+            </button>
+          )}
         </div>
 
-        {/* atalhos das fases: acessíveis por teclado e ideais no celular */}
+        {/* --------------------- Barra Inferior: Atalhos das 5 Estações --------------------- */}
         <div className="pointer-events-auto">
-          <ul className="flex gap-2 overflow-x-auto pb-1">
+          <ul className="flex gap-2 overflow-x-auto pb-1.5 scrollbar-thin">
             {FASES.map((fase) => {
               const p = progresso[fase.id]
               const liberada = faseLiberada(fase.id, progresso, modoLivre)
@@ -287,27 +304,27 @@ export function Hub() {
                   <button
                     onClick={() => liberada && abrirFase(fase.id)}
                     disabled={!liberada}
-                    className="flex min-h-[44px] w-[10.5rem] flex-col items-start gap-1 rounded-xl bg-papel/95 px-3 py-2.5 text-left shadow-leve backdrop-blur-sm transition-transform duration-150 ease-saida hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
+                    className="flex min-h-[42px] w-[9.5rem] sm:w-[10.5rem] flex-col items-start gap-0.5 rounded-xl border border-linha/80 bg-papel/95 px-3 py-2 text-left shadow-leve backdrop-blur-sm transition-transform duration-150 ease-saida hover:-translate-y-0.5 disabled:opacity-45"
                   >
-                    <span className="flex w-full items-center gap-2">
+                    <div className="flex w-full items-center gap-1.5">
                       <span
-                        className="h-2.5 w-2.5 shrink-0 rounded-full"
+                        className="h-2 w-2 shrink-0 rounded-full"
                         style={{ background: liberada ? fase.cor : '#a9a3c4' }}
                       />
-                      <span className="font-mono text-xs font-semibold text-tintaFraca">
+                      <span className="font-mono text-[11px] font-bold text-tintaFraca">
                         {fase.marcador}
                       </span>
                       {badge && (
-                        <span className="ml-auto font-mono text-xs text-mostarda">
+                        <span className="ml-auto font-mono text-[10px] text-mostarda">
                           {badge === 'ouro' ? '★★★' : badge === 'prata' ? '★★' : '★'}
                         </span>
                       )}
-                    </span>
-                    <span className="font-titulo text-sm font-bold leading-tight text-tinta">
+                    </div>
+                    <span className="truncate w-full font-titulo text-xs sm:text-sm font-bold text-tinta">
                       {fase.titulo}
                     </span>
-                    <span className="numeros font-mono text-xs text-tintaFraca">
-                      {p.quizConcluido ? `${pontosDaFase(p)} pts` : liberada ? 'não jogada' : 'trancada'}
+                    <span className="numeros font-mono text-[10px] text-tintaFraca">
+                      {p.quizConcluido ? `${pontosDaFase(p)} pts` : liberada ? 'Disponível' : 'Trancada'}
                     </span>
                   </button>
                 </li>
@@ -315,16 +332,16 @@ export function Hub() {
             })}
           </ul>
 
-          <div className="mt-3 flex flex-wrap items-center gap-2">
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
             <Botao tamanho="sm" variante="secundario" onClick={verResultado}>
-              Ver resultado geral
+              Ver Boletim Geral
             </Botao>
             <Botao tamanho="sm" variante="fantasma" onClick={alternarModoLivre}>
               {modoLivre ? 'Modo livre: ligado' : 'Modo livre: desligado'}
             </Botao>
             {confirmandoReset ? (
-              <span className="flex items-center gap-2 rounded-xl bg-papel/95 px-3 py-1.5 text-sm shadow-leve">
-                Zerar todo o progresso?
+              <span className="flex items-center gap-2 rounded-xl bg-papel/95 px-2.5 py-1 text-xs shadow-leve">
+                Zerar progresso?
                 <button
                   onClick={() => {
                     reiniciarTudo()
@@ -332,18 +349,18 @@ export function Hub() {
                   }}
                   className="font-titulo font-bold text-erro"
                 >
-                  Zerar
+                  Sim
                 </button>
                 <button
                   onClick={() => setConfirmandoReset(false)}
                   className="font-titulo text-tintaFraca"
                 >
-                  Cancelar
+                  Não
                 </button>
               </span>
             ) : (
               <Botao tamanho="sm" variante="fantasma" onClick={() => setConfirmandoReset(true)}>
-                Zerar progresso
+                Zerar
               </Botao>
             )}
           </div>

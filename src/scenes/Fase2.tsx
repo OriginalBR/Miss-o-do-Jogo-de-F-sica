@@ -25,14 +25,9 @@ const V0_CONCEITO = 2 // m/s
 
 const GOMOS_CORES = ['#2f8f7a', '#ffffff', '#e0a324', '#f43f5e', '#655cd2', '#ffffff']
 
-/**
- * Bola estilo "bola de praia / brinquedo" com 6 gomos coloridos alternados,
- * faixa equatorial e pontos de costura. Rotação 100% visível e charmosa.
- */
 function BolaGomosCartoon({ raio }: { raio: number }) {
   return (
     <group>
-      {/* 6 gomos esféricos de cores alternadas */}
       {GOMOS_CORES.map((cor, i) => (
         <mesh key={i}>
           <sphereGeometry
@@ -48,14 +43,12 @@ function BolaGomosCartoon({ raio }: { raio: number }) {
         </mesh>
       ))}
 
-      {/* Contorno geral da bola com Outlines */}
       <mesh>
         <sphereGeometry args={[raio * 0.999, 20, 16]} />
         <meshToonMaterial gradientMap={gradienteToon} color="#2f8f7a" />
         <Outlines thickness={2.8} color={OUTLINE_COR} />
       </mesh>
 
-      {/* Faixas circulares meridianas nos polos */}
       <mesh position={[0, raio * 0.96, 0]}>
         <cylinderGeometry args={[raio * 0.28, raio * 0.28, 0.02, 16]} />
         <meshToonMaterial gradientMap={gradienteToon} color="#ffffff" />
@@ -65,7 +58,6 @@ function BolaGomosCartoon({ raio }: { raio: number }) {
         <meshToonMaterial gradientMap={gradienteToon} color="#ffffff" />
       </mesh>
 
-      {/* Pontos de costura e textura nos gomos */}
       {Array.from({ length: 6 }).map((_, i) => {
         const ang = (i * Math.PI * 2) / 6
         const px = Math.cos(ang) * raio * 0.98
@@ -98,7 +90,6 @@ function CenaImpulso({
   forca: number
   tempo: number
   rodando: boolean
-  /** Fator para transformar m/s em unidades da cena por segundo. */
   escala: number
   limiteX: number
   onLeitura?: (dados: { v: number; t: number }) => void
@@ -136,7 +127,6 @@ function CenaImpulso({
     x.current += v.current * dt * escala
     if (grupoBola.current) {
       grupoBola.current.position.x = x.current
-      // Rotação física nítida ao rolar pelo trilho
       grupoBola.current.rotation.z -= (v.current * dt * escala) / raio
     }
 
@@ -159,13 +149,11 @@ function CenaImpulso({
   return (
     <group>
       <Piso cor="#c9e2ea" tamanho={140} />
-      {/* trilho onde a bola desliza */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[limiteX / 2 - 2, 0.01, 0]}>
         <planeGeometry args={[limiteX + 12, 3.2]} />
         <meshStandardMaterial color="#e5f0f4" roughness={0.7} />
       </mesh>
 
-      {/* Bordas do trilho */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[limiteX / 2 - 2, 0.02, 1.55]}>
         <planeGeometry args={[limiteX + 12, 0.06]} />
         <meshStandardMaterial color="#5b53c9" roughness={0.4} />
@@ -175,19 +163,16 @@ function CenaImpulso({
         <meshStandardMaterial color="#5b53c9" roughness={0.4} />
       </mesh>
 
-      {/* marca da posição inicial */}
       <mesh position={[0, 0.03, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[0.7, 24]} />
         <meshStandardMaterial color="#cfd9de" roughness={0.8} />
       </mesh>
       <Vetor origem={[0, 2.4, 0]} comprimento={compQ0} cor="#d8a12a" />
 
-      {/* Bola com gomos de desenho animado */}
       <group ref={grupoBola} position={[0, raio, 0]}>
         <BolaGomosCartoon raio={raio} />
       </group>
 
-      {/* vetor Q atual acompanhando a bola */}
       <group position={[x.current, 0, 0]}>
         <Vetor origem={[0, raio * 2 + 0.5, 0]} comprimento={compQ} cor="#5b53c9" />
         {forcaAtiva && (
@@ -246,7 +231,7 @@ function Conceito() {
         <PainelConceito
           fase={fase}
           leituras={
-            <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+            <div className="grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-papel p-3 shadow-leve">
               <Leitura rotulo="Q inicial" valor={qInicial.toFixed(1)} unidade="kg·m/s" />
               <Leitura rotulo="Impulso F·Δt" valor={impulso.toFixed(1)} unidade="N·s" destaque />
               <Leitura rotulo="Q final previsto" valor={qFinal.toFixed(1)} unidade="kg·m/s" />
@@ -292,14 +277,14 @@ function Conceito() {
               setTempo(v)
               reiniciar()
             }}
-            ajuda={`A bola começa com ${V0_CONCEITO} m/s (vetor dourado).`}
+            ajuda={`Inicia com ${V0_CONCEITO} m/s (vetor dourado).`}
           />
 
           <div className="flex gap-2">
-            <Botao larguraTotal onClick={() => setRodando(true)} desabilitado={rodando}>
-              Aplicar a força
+            <Botao larguraTotal tamanho="md" onClick={() => setRodando(true)} desabilitado={rodando}>
+              Aplicar Força
             </Botao>
-            <Botao variante="secundario" onClick={reiniciar}>
+            <Botao variante="secundario" tamanho="md" onClick={reiniciar}>
               Reiniciar
             </Botao>
           </div>
@@ -368,9 +353,9 @@ function Minijogo() {
         </Palco3D>
       }
       sobreposicao={
-        <div className="rounded-xl bg-papel/95 px-4 py-2.5 text-center shadow-leve">
-          <span className="etiqueta">Alvo</span>{' '}
-          <span className="numeros font-mono text-base font-semibold text-tinta">
+        <div className="rounded-xl border border-linha/80 bg-papel/90 px-3 py-1.5 text-center shadow-leve backdrop-blur-md">
+          <span className="etiqueta text-[10px]">Alvo</span>{' '}
+          <span className="numeros font-mono text-sm font-bold text-tinta">
             v final = {V_ALVO} m/s
           </span>
         </div>
@@ -378,19 +363,19 @@ function Minijogo() {
       painel={
         <>
           <div>
-            <TituloBloco passo="2.">{fase.minijogo}</TituloBloco>
-            <p className="mt-2 max-w-[52ch] text-base text-tinta">{fase.objetivo}</p>
+            <TituloBloco passo="2">{fase.minijogo}</TituloBloco>
+            <p className="mt-1 text-xs sm:text-sm text-tinta">{fase.objetivo}</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-4 gap-y-5 rounded-2xl bg-papel p-4 shadow-leve">
-            <Leitura rotulo="Massa do corpo" valor={MASSA_JOGO} unidade="kg" />
+          <div className="grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-papel p-3 shadow-leve">
+            <Leitura rotulo="Massa" valor={MASSA_JOGO} unidade="kg" />
             <Leitura rotulo="v inicial" valor={V0_JOGO} unidade="m/s" />
-            <Leitura rotulo="Seu impulso F·Δt" valor={impulso.toFixed(0)} unidade="N·s" destaque />
-            <Leitura rotulo="v final prevista" valor={vFinal.toFixed(1)} unidade="m/s" />
+            <Leitura rotulo="Impulso F·Δt" valor={impulso.toFixed(0)} unidade="N·s" destaque />
+            <Leitura rotulo="v prevista" valor={vFinal.toFixed(1)} unidade="m/s" />
           </div>
 
           <ControleSlider
-            rotulo="Força do estilingue"
+            rotulo="Força aplicada"
             valor={forca}
             min={0}
             max={200}
@@ -403,7 +388,7 @@ function Minijogo() {
             desabilitado={rodando}
           />
           <ControleSlider
-            rotulo="Tempo de aplicação"
+            rotulo="Tempo de ação"
             valor={tempo}
             min={0}
             max={5}
@@ -415,16 +400,16 @@ function Minijogo() {
               setResultado('nada')
             }}
             desabilitado={rodando}
-            ajuda="Existem várias combinações certas: o que importa é o produto F · Δt."
+            ajuda="Combine F e Δt para obter o produto F·Δt = 200 N·s."
           />
 
-          <Botao larguraTotal tamanho="lg" onClick={lancar} desabilitado={rodando}>
-            {rodando ? 'Lançando...' : 'Lançar'}
+          <Botao larguraTotal tamanho="md" onClick={lancar} desabilitado={rodando}>
+            {rodando ? 'Lançando...' : 'Lançar a Bola'}
           </Botao>
 
           {resultado === 'erro' && (
             <FaixaFeedback tipo="erro" titulo="Passou longe do alvo">
-              <p className="font-mono text-sm leading-relaxed">
+              <p className="font-mono text-xs leading-relaxed">
                 Precisa de ΔQ = m · Δv = 5 · ({V_ALVO} − {V0_JOGO}) = {IMPULSO_NECESSARIO} N·s.
                 <br />
                 Seu impulso: {forca} N × {tempo.toFixed(1)} s = {impulso.toFixed(0)} N·s.
@@ -434,15 +419,14 @@ function Minijogo() {
 
           {venceu && (
             <>
-              <FaixaFeedback tipo="acerto" titulo="Impulso certeiro!">
-                <p className="font-mono text-sm leading-relaxed">
-                  F · Δt = {impulso.toFixed(0)} N·s = ΔQ → v = {V0_JOGO} + {IMPULSO_NECESSARIO}/5 ={' '}
-                  {V_ALVO} m/s. +20 pontos.
+              <FaixaFeedback tipo="acerto" titulo="Impulso Certeiro!">
+                <p className="font-mono text-xs leading-relaxed">
+                  F · Δt = {impulso.toFixed(0)} N·s = ΔQ → v = {V_ALVO} m/s. +20 pontos.
                 </p>
               </FaixaFeedback>
               <Divisor />
-              <Botao larguraTotal tamanho="lg" onClick={avancarEtapa}>
-                Ir para o quiz →
+              <Botao larguraTotal tamanho="md" onClick={avancarEtapa}>
+                Ir para o Quiz →
               </Botao>
             </>
           )}

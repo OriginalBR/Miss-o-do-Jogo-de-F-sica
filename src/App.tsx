@@ -1,5 +1,8 @@
 import { useEffect } from 'react'
-import { HUD } from './components/HUD'
+import { useGameStore } from './store/gameStore'
+import { TelaLoginAluno } from './components/TelaLoginAluno'
+import { TelaSenhaProfessora } from './components/TelaSenhaProfessora'
+import { DashboardProfessora } from './components/DashboardProfessora'
 import { Hub } from './components/Hub'
 import { TelaResultado } from './components/TelaResultado'
 import Fase1 from './scenes/Fase1'
@@ -7,48 +10,96 @@ import Fase2 from './scenes/Fase2'
 import Fase3 from './scenes/Fase3'
 import Fase4 from './scenes/Fase4'
 import Fase5 from './scenes/Fase5'
-import { useGameStore } from './store/gameStore'
 
 /* =====================================================================
-   APP — decide o que aparece na tela
-   Não há biblioteca de rotas: o estado global (tela / faseAtual / etapa)
-   já dá conta de tudo e o jogo continua leve.
+   APLICAÇÃO PRINCIPAL — Laboratório de Física 3D
+   Roteamento:
+   - Alunos: Entrada com Nome + Sala (1°A, 1°B, 1°C) -> Hub 3D -> Fases
+   - Professora Jaque: Área Restrita via URL (/dashboard, /admin, #/dashboard)
+     ou atalho de teclado (Ctrl+Alt+P). Exige senha docente.
    ===================================================================== */
 
-const COMPONENTES_FASE: Record<number, () => JSX.Element> = {
-  1: Fase1,
-  2: Fase2,
-  3: Fase3,
-  4: Fase4,
-  5: Fase5,
+function CenaFase({ id }: { id: number }) {
+  switch (id) {
+    case 1:
+      return <Fase1 />
+    case 2:
+      return <Fase2 />
+    case 3:
+      return <Fase3 />
+    case 4:
+      return <Fase4 />
+    case 5:
+      return <Fase5 />
+    default:
+      return <Fase1 />
+  }
 }
 
 export default function App() {
   const tela = useGameStore((s) => s.tela)
   const faseAtual = useGameStore((s) => s.faseAtual)
-  const irParaHub = useGameStore((s) => s.irParaHub)
+  const alunoAtual = useGameStore((s) => s.alunoAtual)
+  const abrirDashboard = useGameStore((s) => s.abrirDashboard)
 
-  // Esc sempre volta para o laboratório (atalho de teclado)
+  // Escuta rotas de URL (#/dashboard, #/admin, #/professora, /dashboard, /admin)
   useEffect(() => {
-    function aoTeclar(e: KeyboardEvent) {
-      if (e.key === 'Escape') irParaHub()
+    function checarRota() {
+      const hash = window.location.hash.toLowerCase()
+      const path = window.location.pathname.toLowerCase()
+      const search = window.location.search.toLowerCase()
+
+      if (
+        hash.includes('dashboard') ||
+        hash.includes('admin') ||
+        hash.includes('professora') ||
+        path.endsWith('/dashboard') ||
+        path.endsWith('/admin') ||
+        search.includes('admin=true')
+      ) {
+        abrirDashboard()
+      }
     }
-    window.addEventListener('keydown', aoTeclar)
-    return () => window.removeEventListener('keydown', aoTeclar)
-  }, [irParaHub])
 
-  const FaseAtiva = COMPONENTES_FASE[faseAtual] ?? Fase1
+    checarRota()
+    window.addEventListener('hashchange', checarRota)
+    return () => window.removeEventListener('hashchange', checarRota)
+  }, [abrirDashboard])
 
-  return (
-    <div className="flex h-full flex-col overflow-hidden bg-papelFundo">
-      {tela === 'fase' && (
-        <>
-          <HUD />
-          <FaseAtiva />
-        </>
-      )}
-      {tela === 'hub' && <Hub />}
-      {tela === 'resultado' && <TelaResultado />}
-    </div>
-  )
+  // Atalho secreto de teclado para a professora (Ctrl + Alt + P)
+  useEffect(() => {
+    function tratarTeclado(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.altKey && e.key.toLowerCase() === 'p') {
+        e.preventDefault()
+        abrirDashboard()
+      }
+    }
+
+    window.addEventListener('keydown', tratarTeclado)
+    return () => window.removeEventListener('keydown', tratarTeclado)
+  }, [abrirDashboard])
+
+  // Roteador de telas
+  if (tela === 'dashboard') {
+    return <DashboardProfessora />
+  }
+
+  if (tela === 'senha-professora') {
+    return <TelaSenhaProfessora />
+  }
+
+  if (!alunoAtual || tela === 'login') {
+    return <TelaLoginAluno />
+  }
+
+  switch (tela) {
+    case 'hub':
+      return <Hub />
+    case 'fase':
+      return <CenaFase id={faseAtual} />
+    case 'resultado':
+      return <TelaResultado />
+    default:
+      return <Hub />
+  }
 }

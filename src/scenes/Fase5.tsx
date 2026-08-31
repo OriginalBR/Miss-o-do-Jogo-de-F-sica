@@ -17,9 +17,7 @@ import { gradienteToon, OUTLINE_COR } from '../components/materiais'
    FASE 5 — GRÁFICOS COMBINADOS (exercício ESPCEX)
    Moto de 160 kg partindo do repouso.
    Gráfico I (F × t): triângulo de base 20 s e altura 10 N → I = 100 N·s
-     → v(20 s) = 100 / 160 = 0,625 m/s
-   Gráfico II (v × t): de 20 s a 25 s a velocidade cai linearmente até 0
-     → a = −0,125 m/s² ; v(23 s) = 0,25 m/s
+   Gráfico II (v × t): de 20 s a 25 s velocidade cai linearmente a 0
    ΔQ entre 23 s e 25 s = 160 · (0 − 0,25) = −40 kg·m/s
    ===================================================================== */
 
@@ -27,7 +25,6 @@ const MASSA_MOTO = 160 // kg
 const T_TOTAL = 25 // s
 const RAIO_RODA_MOTO = 0.34 // m
 
-/** Força resultante no instante t (gráfico I). */
 function forcaEm(t: number): number {
   if (t <= 0) return 0
   if (t <= 10) return t
@@ -35,7 +32,6 @@ function forcaEm(t: number): number {
   return 0
 }
 
-/** Impulso acumulado de 0 até t (área do gráfico I). */
 function impulsoAte(t: number): number {
   if (t <= 0) return 0
   if (t <= 10) return (t * t) / 2
@@ -46,18 +42,15 @@ function impulsoAte(t: number): number {
   return 100
 }
 
-/** Velocidade da moto no instante t. */
 function velocidadeEm(t: number): number {
   if (t <= 20) return impulsoAte(t) / MASSA_MOTO
   return Math.max(0, 0.625 - 0.125 * (t - 20))
 }
 
-/** Quantidade de movimento no instante t. */
 function qEm(t: number): number {
   return MASSA_MOTO * velocidadeEm(t)
 }
 
-/** Distância percorrida até t (integração numérica simples). */
 function distanciaAte(t: number): number {
   const passo = 0.05
   let s = 0
@@ -67,15 +60,11 @@ function distanciaAte(t: number): number {
   return s
 }
 
-// Escalas dos gráficos
 const G1 = { t: 0.3, f: 0.3 }
 const G2 = { t: 0.8, v: 4 }
 
 /* ------------------------------ 3D ---------------------------------- */
 
-/**
- * Roda de moto cartoon com pneu grosso, aro dourado contrastante, raios brancos e rotação sincronizada.
- */
 function RodaMoto({
   dx,
   t,
@@ -99,7 +88,6 @@ function RodaMoto({
   return (
     <group position={[dx, 0.34, 0]} rotation={[Math.PI / 2, 0, 0]}>
       <group ref={grupoRoda}>
-        {/* Pneu grosso cartoon */}
         <mesh>
           <cylinderGeometry args={[0.34, 0.34, 0.22, 18]} />
           <meshToonMaterial
@@ -111,7 +99,6 @@ function RodaMoto({
           {!fantasma && <Outlines thickness={2.5} color={OUTLINE_COR} />}
         </mesh>
 
-        {/* Aro interno dourado contrastante */}
         <mesh>
           <cylinderGeometry args={[0.22, 0.22, 0.23, 18]} />
           <meshToonMaterial
@@ -122,7 +109,6 @@ function RodaMoto({
           />
         </mesh>
 
-        {/* Raios cruzados */}
         <mesh position={[0, 0.118, 0]}>
           <boxGeometry args={[0.06, 0.015, 0.44]} />
           <meshToonMaterial
@@ -160,7 +146,6 @@ function RodaMoto({
           />
         </mesh>
 
-        {/* Miolo central */}
         <mesh position={[0, 0.125, 0]}>
           <cylinderGeometry args={[0.08, 0.08, 0.02, 12]} />
           <meshToonMaterial
@@ -180,7 +165,6 @@ function RodaMoto({
           />
         </mesh>
 
-        {/* Marca vermelha na banda */}
         <mesh position={[0.341, 0, 0]}>
           <boxGeometry args={[0.015, 0.225, 0.1]} />
           <meshToonMaterial
@@ -202,12 +186,10 @@ function Moto({ t = 0, fantasma = false }: { t?: number; fantasma?: boolean }) {
 
   return (
     <group>
-      {/* Rodas dianteira e traseira */}
       {[-0.65, 0.65].map((dx) => (
         <RodaMoto key={dx} dx={dx} t={t} opacidade={opacidade} fantasma={fantasma} />
       ))}
 
-      {/* Base do chassi (tom mais escuro) */}
       <RoundedBox args={[1.55, 0.28, 0.36]} radius={0.1} smoothness={3} position={[0, 0.52, 0]}>
         <meshToonMaterial
           gradientMap={gradienteToon}
@@ -218,7 +200,6 @@ function Moto({ t = 0, fantasma = false }: { t?: number; fantasma?: boolean }) {
         {!fantasma && <Outlines thickness={2.5} color={OUTLINE_COR} />}
       </RoundedBox>
 
-      {/* Carenagem e tanque principal */}
       <RoundedBox args={[1.4, 0.36, 0.38]} radius={0.12} smoothness={3} position={[0, 0.68, 0]}>
         <meshToonMaterial
           gradientMap={gradienteToon}
@@ -229,7 +210,6 @@ function Moto({ t = 0, fantasma = false }: { t?: number; fantasma?: boolean }) {
         {!fantasma && <Outlines thickness={2.5} color={OUTLINE_COR} />}
       </RoundedBox>
 
-      {/* Banco */}
       <RoundedBox args={[0.55, 0.14, 0.34]} radius={0.06} smoothness={2} position={[-0.2, 0.88, 0]}>
         <meshToonMaterial
           gradientMap={gradienteToon}
@@ -239,7 +219,6 @@ function Moto({ t = 0, fantasma = false }: { t?: number; fantasma?: boolean }) {
         />
       </RoundedBox>
 
-      {/* Guidão com esferas nas pontas */}
       <group position={[0.56, 0.98, 0]}>
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[0.05, 0.05, 0.65, 10]} />
@@ -260,15 +239,12 @@ function Moto({ t = 0, fantasma = false }: { t?: number; fantasma?: boolean }) {
         </mesh>
       </group>
 
-      {/* Farol dianteiro luminoso */}
       <mesh position={[0.78, 0.72, 0]}>
         <sphereGeometry args={[0.13, 14, 12]} />
         <meshBasicMaterial color="#fffbe6" transparent={fantasma} opacity={opacidade} />
         {!fantasma && <Outlines thickness={2} color={OUTLINE_COR} />}
       </mesh>
 
-      {/* Piloto com proporção Chibi */}
-      {/* Tronco */}
       <mesh position={[-0.1, 1.12, 0]}>
         <cylinderGeometry args={[0.22, 0.26, 0.68, 14]} />
         <meshToonMaterial
@@ -280,7 +256,6 @@ function Moto({ t = 0, fantasma = false }: { t?: number; fantasma?: boolean }) {
         {!fantasma && <Outlines thickness={2.2} color={OUTLINE_COR} />}
       </mesh>
 
-      {/* Capacete Chibi maior com friso decorativo */}
       <group position={[-0.05, 1.72, 0]}>
         <mesh>
           <sphereGeometry args={[0.34, 18, 14]} />
@@ -292,12 +267,10 @@ function Moto({ t = 0, fantasma = false }: { t?: number; fantasma?: boolean }) {
           />
           {!fantasma && <Outlines thickness={2.5} color={OUTLINE_COR} />}
         </mesh>
-        {/* Viseira do capacete */}
         <mesh position={[0.22, 0.04, 0]}>
           <sphereGeometry args={[0.2, 14, 10, 0, Math.PI, 0, Math.PI / 2]} />
           <meshToonMaterial gradientMap={gradienteToon} color="#221e33" />
         </mesh>
-        {/* Faixa / friso colorido ao redor do capacete */}
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.342, 0.03, 10, 24]} />
           <meshToonMaterial gradientMap={gradienteToon} color="#ffffff" />
@@ -307,7 +280,6 @@ function Moto({ t = 0, fantasma = false }: { t?: number; fantasma?: boolean }) {
   )
 }
 
-/** Gráfico I (F × t) como painel flutuante. */
 function GraficoForca({ t }: { t: number }) {
   const xPico = 10 * G1.t
   const yPico = 10 * G1.f
@@ -321,7 +293,6 @@ function GraficoForca({ t }: { t: number }) {
       <EixosGrafico largura={xFim} altura={yPico} marcasX={4} marcasY={2} />
       <SegmentoLinha a={[0, 0]} b={[xPico, yPico]} cor="#d94138" espessura={0.11} />
       <SegmentoLinha a={[xPico, yPico]} b={[xFim, 0]} cor="#d94138" espessura={0.11} />
-      {/* Área percorrida com Toon Shading */}
       <mesh position={[xMarcador / 2, 0.06, -0.05]}>
         <planeGeometry args={[Math.max(xMarcador, 0.01), 0.12]} />
         <meshToonMaterial gradientMap={gradienteToon} color="#e0a324" />
@@ -331,7 +302,6 @@ function GraficoForca({ t }: { t: number }) {
   )
 }
 
-/** Gráfico II (v × t) como painel flutuante. */
 function GraficoVelocidade({ t }: { t: number }) {
   const largura = 5 * G2.t
   const altura = 0.625 * G2.v
@@ -354,7 +324,6 @@ function CenaPista({
   tFantasma,
 }: {
   t: number
-  /** Instante do segundo marcador (moto translúcida), usado no mini-jogo. */
   tFantasma?: number
 }) {
   const escala = 1.6
@@ -364,12 +333,10 @@ function CenaPista({
   return (
     <group>
       <Piso cor="#cdd6c6" tamanho={140} />
-      {/* Pista de asfalto */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
         <planeGeometry args={[40, 5]} />
         <meshStandardMaterial color="#4a4763" roughness={0.88} />
       </mesh>
-      {/* Faixas da pista */}
       {Array.from({ length: 17 }, (_, i) => (
         <mesh key={i} rotation={[-Math.PI / 2, 0, 0]} position={[-16 + i * 2, 0.02, 0]}>
           <planeGeometry args={[0.9, 0.14]} />
@@ -377,7 +344,6 @@ function CenaPista({
         </mesh>
       ))}
 
-      {/* Marcos de baliza ao longo da pista com Outlines */}
       {Array.from({ length: 9 }, (_, i) => (
         <group key={i} position={[-16 + i * 4, 0, -2.8]}>
           <mesh position={[0, 0.4, 0]}>
@@ -428,18 +394,18 @@ function Conceito() {
         <PainelConceito
           fase={fase}
           leituras={
-            <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+            <div className="grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-papel p-3 shadow-leve">
               <Leitura rotulo="Instante" valor={t.toFixed(1)} unidade="s" />
-              <Leitura rotulo="Força resultante" valor={forcaEm(t).toFixed(1)} unidade="N" />
-              <Leitura rotulo="Impulso acumulado" valor={impulso.toFixed(1)} unidade="N·s" />
+              <Leitura rotulo="Força" valor={forcaEm(t).toFixed(1)} unidade="N" />
+              <Leitura rotulo="Impulso acum." valor={impulso.toFixed(1)} unidade="N·s" />
               <Leitura rotulo="Velocidade" valor={v.toFixed(3)} unidade="m/s" destaque />
-              <Leitura rotulo="Q = m · v" valor={q.toFixed(1)} unidade="kg·m/s" />
-              <Leitura rotulo="Massa da moto" valor={MASSA_MOTO} unidade="kg" />
+              <Leitura rotulo="Q = m·v" valor={q.toFixed(1)} unidade="kg·m/s" />
+              <Leitura rotulo="Massa" valor={MASSA_MOTO} unidade="kg" />
             </div>
           }
         >
           <ControleSlider
-            rotulo="Linha do tempo"
+            rotulo="Linha do tempo (t)"
             valor={t}
             min={0}
             max={T_TOTAL}
@@ -447,10 +413,10 @@ function Conceito() {
             decimais={1}
             unidade="s"
             onChange={setT}
-            ajuda="Até 20 s manda o gráfico de força (painel vermelho). Depois manda o gráfico de velocidade (painel azul)."
+            ajuda="Até 20 s: gráfico F×t (vermelho). De 20 a 25 s: gráfico v×t (azul)."
           />
-          <p className="rounded-lg bg-papelFundo px-4 py-3 font-mono text-sm leading-relaxed text-tinta">
-            A faixa dourada no gráfico I é a área já percorrida, ou seja, o impulso acumulado.
+          <p className="rounded-lg bg-papelFundo px-3 py-2 font-mono text-xs leading-relaxed text-tinta">
+            Faixa dourada = impulso acumulado.
             <br />v = I ÷ m = {impulso.toFixed(1)} ÷ {MASSA_MOTO} ={' '}
             <strong className="text-pigmento">{v.toFixed(3)} m/s</strong>
           </p>
@@ -500,34 +466,28 @@ function Minijogo() {
         </Palco3D>
       }
       sobreposicao={
-        <div className="rounded-xl bg-papel/95 px-4 py-2.5 text-center shadow-leve">
-          <span className="etiqueta">Alvo</span>{' '}
-          <span className="numeros font-mono text-base font-semibold text-tinta">
-            ΔQ = −40,0 kg·m/s
-          </span>
+        <div className="rounded-xl border border-linha/80 bg-papel/90 px-3 py-1.5 text-center shadow-leve backdrop-blur-md">
+          <span className="etiqueta text-[10px]">Alvo: ΔQ = −40,0 kg·m/s</span>
         </div>
       }
       painel={
         <>
           <div>
-            <TituloBloco passo="2.">{fase.minijogo}</TituloBloco>
-            <p className="mt-2 max-w-[52ch] text-base text-tinta">
-              A moto translúcida marca o instante inicial e a moto vermelha o instante final. Mova
-              os dois marcadores até a variação da quantidade de movimento bater com o alvo.
-            </p>
+            <TituloBloco passo="2">{fase.minijogo}</TituloBloco>
+            <p className="mt-1 text-xs sm:text-sm text-tinta">{fase.objetivo}</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-4 gap-y-5 rounded-2xl bg-papel p-4 shadow-leve">
-            <Leitura rotulo="v no instante inicial" valor={vA.toFixed(3)} unidade="m/s" />
-            <Leitura rotulo="v no instante final" valor={vB.toFixed(3)} unidade="m/s" />
+          <div className="grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-papel p-3 shadow-leve">
+            <Leitura rotulo="v inicial" valor={vA.toFixed(3)} unidade="m/s" />
+            <Leitura rotulo="v final" valor={vB.toFixed(3)} unidade="m/s" />
             <Leitura rotulo="Q inicial" valor={(MASSA_MOTO * vA).toFixed(1)} unidade="kg·m/s" />
             <Leitura rotulo="Q final" valor={(MASSA_MOTO * vB).toFixed(1)} unidade="kg·m/s" />
             <Leitura rotulo="ΔQ" valor={deltaQ.toFixed(1)} unidade="kg·m/s" destaque />
-            <Leitura rotulo="Aceleração (após 20 s)" valor="−0,125" unidade="m/s²" />
+            <Leitura rotulo="Aceleração" valor="−0,125" unidade="m/s²" />
           </div>
 
           <ControleSlider
-            rotulo="Instante inicial"
+            rotulo="Instante inicial (t₁)"
             valor={tA}
             min={0}
             max={25}
@@ -540,7 +500,7 @@ function Minijogo() {
             }}
           />
           <ControleSlider
-            rotulo="Instante final"
+            rotulo="Instante final (t₂)"
             valor={tB}
             min={0}
             max={25}
@@ -551,38 +511,35 @@ function Minijogo() {
               setTB(v)
               setEstado('ajustando')
             }}
-            ajuda="Dica: o exercício da apostila pergunta o intervalo entre 23 s e 25 s."
+            ajuda="Dica: o exercício pede o intervalo entre 23 s e 25 s."
           />
 
           {!venceu && (
-            <Botao larguraTotal tamanho="lg" onClick={conferir}>
-              Conferir ΔQ
+            <Botao larguraTotal tamanho="md" onClick={conferir}>
+              Conferir Variação ΔQ
             </Botao>
           )}
 
           {estado === 'erro' && (
             <FaixaFeedback tipo="erro" titulo="Ainda não é −40 kg·m/s">
-              <p className="font-mono text-sm leading-relaxed">
-                ΔQ = m · (v_final − v_inicial) = 160 · ({vB.toFixed(3)} − {vA.toFixed(3)}) ={' '}
-                {deltaQ.toFixed(1)} kg·m/s.
+              <p className="font-mono text-xs leading-relaxed">
+                ΔQ = 160 · ({vB.toFixed(3)} − {vA.toFixed(3)}) = {deltaQ.toFixed(1)} kg·m/s.
                 <br />
-                Lembre: v(20 s) = 0,625 m/s e a aceleração depois disso é −0,125 m/s².
+                v(20 s) = 0,625 m/s e desaceleração de −0,125 m/s².
               </p>
             </FaixaFeedback>
           )}
 
           {venceu && (
             <>
-              <FaixaFeedback tipo="acerto" titulo="Corrida analítica concluída">
-                <p className="font-mono text-sm leading-relaxed">
-                  v(23 s) = 0,625 − 0,125 · 3 = 0,25 m/s e v(25 s) = 0.
-                  <br />
-                  ΔQ = 160 · (0 − 0,25) = −40 kg·m/s. +20 pontos.
+              <FaixaFeedback tipo="acerto" titulo="Análise Concluída!">
+                <p className="font-mono text-xs leading-relaxed">
+                  v(23 s) = 0,25 m/s e v(25 s) = 0 → ΔQ = 160 · (0 − 0,25) = −40 kg·m/s. +20 pts.
                 </p>
               </FaixaFeedback>
               <Divisor />
-              <Botao larguraTotal tamanho="lg" onClick={avancarEtapa}>
-                Ir para o quiz →
+              <Botao larguraTotal tamanho="md" onClick={avancarEtapa}>
+                Ir para o Quiz →
               </Botao>
             </>
           )}

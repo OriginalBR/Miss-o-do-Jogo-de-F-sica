@@ -1,4 +1,4 @@
-﻿# Dependências
+# Dependências
 node_modules/
 
 # Build
@@ -6,6 +6,8 @@ dist/
 dist-ssr/
 
 # Arquivos de ambiente e temporários
+.env
+.env*.local
 .DS_Store
 *.local
 *.log

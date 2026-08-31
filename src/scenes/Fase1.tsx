@@ -25,10 +25,6 @@ const RAIO_RODA = 0.38 // m
 
 /* ------------------------------ 3D ---------------------------------- */
 
-/**
- * Roda de brinquedo com pneu grosso, aro dourado contrastante, raios nítidos,
- * marca assimétrica vermelha e rotação física (ω = v / r).
- */
 function Roda({
   posicao,
   velocidade,
@@ -48,20 +44,20 @@ function Roda({
   return (
     <group position={posicao} rotation={[Math.PI / 2, 0, 0]}>
       <group ref={grupoRoda}>
-        {/* Pneu de borracha grosso estilo cartoon */}
+        {/* Pneu */}
         <mesh>
           <cylinderGeometry args={[0.38, 0.38, 0.36, 20]} />
           <meshToonMaterial gradientMap={gradienteToon} color="#221e33" />
           <Outlines thickness={2.5} color={OUTLINE_COR} />
         </mesh>
 
-        {/* Calota / Aro central dourado contrastante */}
+        {/* Calota */}
         <mesh position={[0, 0, 0]}>
           <cylinderGeometry args={[0.26, 0.26, 0.37, 18]} />
           <meshToonMaterial gradientMap={gradienteToon} color="#e0a324" />
         </mesh>
 
-        {/* Raios cruzados brancos em relevo (face externa e interna) */}
+        {/* Raios */}
         <mesh position={[0, 0.19, 0]}>
           <boxGeometry args={[0.08, 0.015, 0.48]} />
           <meshToonMaterial gradientMap={gradienteToon} color="#ffffff" />
@@ -79,7 +75,7 @@ function Roda({
           <meshToonMaterial gradientMap={gradienteToon} color="#ffffff" />
         </mesh>
 
-        {/* Miolo central */}
+        {/* Miolo */}
         <mesh position={[0, 0.195, 0]}>
           <cylinderGeometry args={[0.09, 0.09, 0.02, 12]} />
           <meshToonMaterial gradientMap={gradienteToon} color="#ffffff" />
@@ -89,7 +85,7 @@ function Roda({
           <meshToonMaterial gradientMap={gradienteToon} color="#ffffff" />
         </mesh>
 
-        {/* Marca assimétrica vermelha na banda de rodagem */}
+        {/* Marca vermelha */}
         <mesh position={[0.381, 0, 0]}>
           <boxGeometry args={[0.015, 0.365, 0.12]} />
           <meshToonMaterial gradientMap={gradienteToon} color="#f43f5e" />
@@ -106,7 +102,6 @@ function CenaCarro({
   medidor,
 }: {
   forca: number
-  /** Se informada, a velocidade não é simulada: fica travada nesse valor. */
   velocidadeFixa?: number
   onLeitura?: (v: number) => void
   medidor?: { razao: number; ok: boolean }
@@ -162,7 +157,7 @@ function CenaCarro({
         ))}
       </group>
 
-      {/* Marcos de distância nas margens */}
+      {/* Balizas */}
       <group ref={balizasPista}>
         {Array.from({ length: 14 }, (_, i) => (
           <group key={i} position={[-72 + i * 12, 0, -4.8]}>
@@ -179,44 +174,37 @@ function CenaCarro({
         ))}
       </group>
 
-      {/* CARRINHO DE BRINQUEDO ESTILIZADO (TOON / CHIBI) */}
+      {/* CARRINHO DE BRINQUEDO ESTILIZADO */}
       <group position={[0, 0.38, 0]}>
-        {/* Base / Parte inferior do chassi (tom de sombra mais escuro) */}
         <RoundedBox args={[3.6, 0.34, 1.7]} radius={0.12} smoothness={4} position={[0, 0.22, 0]}>
           <meshToonMaterial gradientMap={gradienteToon} color="#453d8c" />
           <Outlines thickness={2.8} color={OUTLINE_COR} />
         </RoundedBox>
 
-        {/* Carroceria principal (tom vibrante de destaque) */}
         <RoundedBox args={[3.4, 0.48, 1.62]} radius={0.16} smoothness={4} position={[0, 0.54, 0]}>
           <meshToonMaterial gradientMap={gradienteToon} color="#655cd2" />
           <Outlines thickness={2.8} color={OUTLINE_COR} />
         </RoundedBox>
 
-        {/* Cabine fofa mais alta e arredondada (proporção toy car) */}
         <RoundedBox args={[1.8, 0.85, 1.42]} radius={0.24} smoothness={4} position={[-0.2, 1.08, 0]}>
           <meshToonMaterial gradientMap={gradienteToon} color="#9a93e8" />
           <Outlines thickness={2.8} color={OUTLINE_COR} />
         </RoundedBox>
 
-        {/* Vidro do para-brisa frontal e lateral */}
         <RoundedBox args={[0.1, 0.56, 1.2]} radius={0.06} smoothness={3} position={[0.72, 1.08, 0]}>
           <meshToonMaterial gradientMap={gradienteToon} color="#e0f2fe" />
         </RoundedBox>
 
-        {/* Para-choque dianteiro contrastante */}
         <RoundedBox args={[0.22, 0.2, 1.68]} radius={0.06} smoothness={3} position={[1.74, 0.26, 0]}>
           <meshToonMaterial gradientMap={gradienteToon} color="#ded9f4" />
           <Outlines thickness={2} color={OUTLINE_COR} />
         </RoundedBox>
 
-        {/* Para-choque traseiro */}
         <RoundedBox args={[0.22, 0.2, 1.68]} radius={0.06} smoothness={3} position={[-1.74, 0.26, 0]}>
           <meshToonMaterial gradientMap={gradienteToon} color="#ded9f4" />
           <Outlines thickness={2} color={OUTLINE_COR} />
         </RoundedBox>
 
-        {/* 2 Faróis amigáveis (olhinhos luminosos do carro) */}
         <mesh position={[1.72, 0.54, 0.5]}>
           <sphereGeometry args={[0.16, 16, 14]} />
           <meshBasicMaterial color="#fffbe6" />
@@ -228,7 +216,6 @@ function CenaCarro({
           <Outlines thickness={2} color={OUTLINE_COR} />
         </mesh>
 
-        {/* Lanternas traseiras */}
         <mesh position={[-1.72, 0.54, 0.5]}>
           <sphereGeometry args={[0.13, 14, 12]} />
           <meshToonMaterial gradientMap={gradienteToon} color="#f43f5e" />
@@ -240,7 +227,6 @@ function CenaCarro({
           <Outlines thickness={2} color={OUTLINE_COR} />
         </mesh>
 
-        {/* Cano de escape traseiro dourado com ponta arredondada */}
         <group position={[-1.76, 0.22, -0.45]} rotation={[0, 0, Math.PI / 2]}>
           <mesh>
             <cylinderGeometry args={[0.08, 0.08, 0.28, 14]} />
@@ -249,14 +235,12 @@ function CenaCarro({
           </mesh>
         </group>
 
-        {/* 4 Rodas animadas com pneu grosso */}
         <Roda posicao={[1.15, 0, 0.92]} velocidade={velocidade} />
         <Roda posicao={[1.15, 0, -0.92]} velocidade={velocidade} />
         <Roda posicao={[-1.15, 0, 0.92]} velocidade={velocidade} />
         <Roda posicao={[-1.15, 0, -0.92]} velocidade={velocidade} />
       </group>
 
-      {/* Vetor da força do motor e da velocidade */}
       <Vetor origem={[2.2, 0.8, 0]} comprimento={compF} cor="#d8a12a" espessura={0.08} />
       <Vetor origem={[-1.9, 2.6, 0]} comprimento={compV} cor="#5b53c9" espessura={0.06} />
 
@@ -265,7 +249,6 @@ function CenaCarro({
   )
 }
 
-/** Coluna que compara a potência atual com a potência-alvo. */
 function MedidorPotencia({ razao, ok }: { razao: number; ok: boolean }) {
   const altura = Math.min(Math.max(razao, 0), 1.6) * 3
   return (
@@ -291,7 +274,6 @@ function MedidorPotencia({ razao, ok }: { razao: number; ok: boolean }) {
         />
         <Outlines thickness={2} color={OUTLINE_COR} />
       </RoundedBox>
-      {/* Linha de alvo dourada */}
       <RoundedBox args={[1.3, 0.12, 1.3]} radius={0.03} smoothness={2} position={[0, 3, 0]}>
         <meshToonMaterial gradientMap={gradienteToon} color="#d8a12a" />
         <Outlines thickness={2} color={OUTLINE_COR} />
@@ -321,15 +303,15 @@ function Conceito() {
         <PainelConceito
           fase={fase}
           leituras={
-            <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+            <div className="grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-papel p-3 shadow-leve">
               <Leitura rotulo="Velocidade" valor={velocidade.toFixed(1)} unidade="m/s" />
               <Leitura
-                rotulo="Potência instantânea"
+                rotulo="Potência"
                 valor={(potencia / 1000).toFixed(1)}
                 unidade="kW"
                 destaque
               />
-              <Leitura rotulo="Força do motor" valor={forca.toLocaleString('pt-BR')} unidade="N" />
+              <Leitura rotulo="Força" valor={forca.toLocaleString('pt-BR')} unidade="N" />
               <Leitura rotulo="Aceleração" valor={aceleracao.toFixed(2)} unidade="m/s²" />
             </div>
           }
@@ -342,9 +324,9 @@ function Conceito() {
             passo={100}
             unidade="N"
             onChange={setForca}
-            ajuda="A velocidade sobe até o arrasto do ar equilibrar a força."
+            ajuda="A velocidade aumenta até o arrasto do ar equilibrar a força."
           />
-          <p className="rounded-lg bg-papelFundo px-4 py-3 font-mono text-sm text-tinta">
+          <p className="rounded-lg bg-papelFundo px-3 py-2 font-mono text-xs text-tinta">
             P = {forca.toLocaleString('pt-BR')} N × {velocidade.toFixed(1)} m/s ={' '}
             <strong className="text-pigmento">{(potencia / 1000).toFixed(1)} kW</strong>
           </p>
@@ -412,21 +394,21 @@ function Minijogo() {
         </Palco3D>
       }
       sobreposicao={
-        <div className="flex items-center justify-between rounded-xl bg-papel/95 px-4 py-2.5 shadow-leve">
-          <span className="etiqueta">
+        <div className="flex items-center justify-between rounded-xl border border-linha/80 bg-papel/90 px-3 py-1.5 shadow-leve backdrop-blur-md">
+          <span className="etiqueta text-[10px]">
             Rodada {Math.min(rodada + 1, RODADAS.length)} de {RODADAS.length}
           </span>
-          <span className="numeros font-mono text-sm text-tintaFraca">⏱ {segundos}s</span>
+          <span className="numeros font-mono text-xs font-semibold text-tinta">⏱ {segundos}s</span>
         </div>
       }
       painel={
         <>
           <div>
-            <TituloBloco passo="2.">{fase.minijogo}</TituloBloco>
-            <p className="mt-2 max-w-[52ch] text-base text-tinta">{fase.objetivo}</p>
+            <TituloBloco passo="2">{fase.minijogo}</TituloBloco>
+            <p className="mt-1 text-xs sm:text-sm text-tinta">{fase.objetivo}</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-4 gap-y-5 rounded-2xl bg-papel p-4 shadow-leve">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-papel p-3 shadow-leve">
             <Leitura
               rotulo="Potência-alvo"
               valor={(atual.potenciaAlvo / 1000).toFixed(0)}
@@ -456,18 +438,18 @@ function Minijogo() {
               setResultado('nada')
             }}
             desabilitado={venceu}
-            ajuda={dentro ? 'Está na faixa certa. Trave a potência!' : 'Use F = P ÷ v para calcular.'}
+            ajuda={dentro ? 'Na faixa certa! Trave a potência.' : 'Use F = P ÷ v para calcular.'}
           />
 
           {!venceu && (
-            <Botao larguraTotal tamanho="lg" onClick={travar}>
-              Travar potência
+            <Botao larguraTotal tamanho="md" onClick={travar}>
+              Travar Potência
             </Botao>
           )}
 
           {resultado === 'erro' && (
             <FaixaFeedback tipo="erro" titulo="Ainda não é essa potência">
-              <p className="font-mono text-sm">
+              <p className="font-mono text-xs">
                 {(potencia / 1000).toFixed(1)} kW {potencia > atual.potenciaAlvo ? 'passou' : 'faltou'}.
                 Precisa de F = {(atual.potenciaAlvo / 1000).toFixed(0)} 000 ÷ {atual.velocidade}.
               </p>
@@ -476,20 +458,20 @@ function Minijogo() {
 
           {resultado === 'acerto' && !venceu && (
             <FaixaFeedback tipo="acerto" titulo="Acertou! Próxima rodada">
-              <p className="text-sm">Novo alvo no painel. A velocidade mudou, refaça a conta.</p>
+              <p className="text-xs">Velocidade mudou. Refaça o cálculo F = P ÷ v.</p>
             </FaixaFeedback>
           )}
 
           {venceu && (
             <>
-              <FaixaFeedback tipo="acerto" titulo={`Desafio concluído em ${segundos}s`}>
-                <p className="text-sm">
-                  Você acertou as duas potências. +20 pontos pelo mini-jogo.
+              <FaixaFeedback tipo="acerto" titulo={`Concluído em ${segundos}s`}>
+                <p className="text-xs">
+                  Você dominou o cálculo de potência instantânea! +20 pontos.
                 </p>
               </FaixaFeedback>
               <Divisor />
-              <Botao larguraTotal tamanho="lg" onClick={avancarEtapa}>
-                Ir para o quiz →
+              <Botao larguraTotal tamanho="md" onClick={avancarEtapa}>
+                Ir para o Quiz →
               </Botao>
             </>
           )}

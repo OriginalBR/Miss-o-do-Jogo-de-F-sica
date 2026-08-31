@@ -5,15 +5,14 @@ import { Botao, CartaoFormula, Divisor } from './ui'
 import { TituloBloco } from './LayoutFase'
 
 /* =====================================================================
-   PAINEL DA ETAPA 1 (CONCEITO)
-   Explica a ideia em linguagem simples, mostra as fórmulas em destaque e
-   abriga os controles da cena manipulável (passados via `children`).
+   PAINEL DA ETAPA 1 (CONCEITO) - Otimizado para Celular e PC
+   Explica a teoria de forma clara e concisa, exibe fórmulas em destaque
+   e abriga os controles interativos sem poluição visual.
    ===================================================================== */
 
 export function PainelConceito({
   fase,
   children,
-  /** Leituras em tempo real da cena (velocidade, potência, Q...). */
   leituras,
 }: {
   fase: DadosFase
@@ -25,17 +24,17 @@ export function PainelConceito({
   return (
     <>
       <div>
-        <TituloBloco passo="1.">Entendendo a ideia</TituloBloco>
-        <div className="mt-3 space-y-3 text-base leading-relaxed text-tinta">
+        <TituloBloco passo="1">Conceito Fundamental</TituloBloco>
+        <div className="mt-2.5 space-y-2 text-xs sm:text-sm leading-relaxed text-tinta">
           {fase.conceito.map((p, i) => (
-            <p key={i} className="max-w-[68ch]">
+            <p key={i} className="max-w-[65ch]">
               {p}
             </p>
           ))}
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         {fase.formulas.map((f) => (
           <CartaoFormula key={f.expressao} expressao={f.expressao} legenda={f.legenda} />
         ))}
@@ -45,8 +44,8 @@ export function PainelConceito({
         <>
           <Divisor />
           <div>
-            <TituloBloco>Painel de leitura</TituloBloco>
-            <div className="mt-3">{leituras}</div>
+            <TituloBloco>Leituras em Tempo Real</TituloBloco>
+            <div className="mt-2.5">{leituras}</div>
           </div>
         </>
       )}
@@ -55,18 +54,18 @@ export function PainelConceito({
         <>
           <Divisor />
           <div>
-            <TituloBloco>Experimente</TituloBloco>
-            <p className="mt-1 text-sm text-tintaFraca">
-              Mexa nos controles e veja o que muda na cena.
+            <TituloBloco>Simulação Interativa</TituloBloco>
+            <p className="mt-1 text-xs text-tintaFraca">
+              Ajuste os valores para observar a resposta física na cena 3D.
             </p>
-            <div className="mt-4 space-y-5">{children}</div>
+            <div className="mt-3 space-y-3.5 sm:space-y-4">{children}</div>
           </div>
         </>
       )}
 
-      <div className="mt-auto pt-2">
-        <Botao larguraTotal tamanho="lg" onClick={avancarEtapa}>
-          Ir para o mini-jogo →
+      <div className="mt-auto pt-3">
+        <Botao larguraTotal tamanho="md" onClick={avancarEtapa}>
+          Iniciar Mini-Jogo →
         </Botao>
       </div>
     </>

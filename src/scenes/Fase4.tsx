@@ -16,13 +16,10 @@ import { gradienteToon, OUTLINE_COR } from '../components/materiais'
    FASE 4 — SISTEMAS ISOLADOS E CONSERVAÇÃO DA QUANTIDADE DE MOVIMENTO
    Sandbox sem atrito: dois corpos em repouso se empurram.
      Q_antes = 0  →  m₁·v₁ = m₂·v₂
-   Modo "patinadores" (personagens estilo chibi cartoon em contato)
-   e modo "explosão" (bomba que se divide em dois fragmentos).
    ===================================================================== */
 
 type Modo = 'patinadores' | 'explosao'
 
-/** Calcula a meia-largura exata de cada corpo para ficarem em contato no início. */
 function meiaLarguraCorpo(massa: number, modo: Modo): number {
   if (modo === 'explosao') {
     const lado = 0.55 + massa * 0.05
@@ -34,9 +31,6 @@ function meiaLarguraCorpo(massa: number, modo: Modo): number {
 
 /* ------------------------------ 3D ---------------------------------- */
 
-/**
- * Patinador Chibi cartoon ou fragmento de explosão cartoon chanfrado com núcleo.
- */
 function Corpo({
   massa,
   cor,
@@ -56,7 +50,6 @@ function Corpo({
           <meshToonMaterial gradientMap={gradienteToon} color={cor} />
           <Outlines thickness={2.5} color={OUTLINE_COR} />
         </RoundedBox>
-        {/* Núcleo de energia do fragmento */}
         <mesh>
           <sphereGeometry args={[lado * 0.28, 12, 10]} />
           <meshBasicMaterial color="#ffffff" />
@@ -65,7 +58,6 @@ function Corpo({
     )
   }
 
-  // Patinador Chibi
   const escalaMassa = 0.85 + massa / 160
   const corCachecol = espelhado ? '#e0a324' : '#ffffff'
   const corLuva = '#221e33'
@@ -73,64 +65,52 @@ function Corpo({
 
   return (
     <group scale={[escalaMassa, escalaMassa, escalaMassa]}>
-      {/* Patins com lâmina chanfrada virada para a direção do movimento */}
       <group position={[0, 0.08, 0]}>
-        {/* Sapato do patim */}
         <RoundedBox args={[0.7, 0.16, 0.36]} radius={0.04} smoothness={2} position={[0, 0.08, 0]}>
           <meshToonMaterial gradientMap={gradienteToon} color="#221e33" />
           <Outlines thickness={2} color={OUTLINE_COR} />
         </RoundedBox>
-        {/* Lâmina prateada no gelo */}
         <RoundedBox args={[0.85, 0.06, 0.04]} radius={0.01} smoothness={2} position={[0, -0.04, 0]}>
           <meshToonMaterial gradientMap={gradienteToon} color="#e5e7eb" />
           <Outlines thickness={1.5} color={OUTLINE_COR} />
         </RoundedBox>
       </group>
 
-      {/* Pernas / Calça Chibi */}
       <mesh position={[0, 0.38, 0]}>
         <cylinderGeometry args={[0.22, 0.24, 0.4, 14]} />
         <meshToonMaterial gradientMap={gradienteToon} color="#28243d" />
         <Outlines thickness={2} color={OUTLINE_COR} />
       </mesh>
 
-      {/* Corpo / Casaco Chibi */}
       <RoundedBox args={[0.55, 0.58, 0.42]} radius={0.14} smoothness={3} position={[0, 0.8, 0]}>
         <meshToonMaterial gradientMap={gradienteToon} color={cor} />
         <Outlines thickness={2.5} color={OUTLINE_COR} />
       </RoundedBox>
 
-      {/* Cachecol no pescoço */}
       <mesh position={[0, 1.1, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[0.26, 0.08, 12, 20]} />
         <meshToonMaterial gradientMap={gradienteToon} color={corCachecol} />
         <Outlines thickness={2} color={OUTLINE_COR} />
       </mesh>
 
-      {/* Cabeça Chibi grande proporcionalmente */}
       <group position={[0, 1.48, 0]}>
-        {/* Rosto */}
         <mesh>
           <sphereGeometry args={[0.38, 20, 16]} />
           <meshToonMaterial gradientMap={gradienteToon} color="#ffdfbf" />
           <Outlines thickness={2.5} color={OUTLINE_COR} />
         </mesh>
 
-        {/* Cabelo geométrico fofo */}
         <mesh position={[0, 0.12, -0.04]} rotation={[0.2, 0, 0]}>
           <sphereGeometry args={[0.4, 16, 14, 0, Math.PI * 2, 0, Math.PI / 1.7]} />
           <meshToonMaterial gradientMap={gradienteToon} color={corCabelo} />
           <Outlines thickness={2} color={OUTLINE_COR} />
         </mesh>
-        {/* Franja frontal */}
         <mesh position={[0, 0.28, 0.26]} rotation={[0.4, 0, 0]}>
           <boxGeometry args={[0.38, 0.14, 0.16]} />
           <meshToonMaterial gradientMap={gradienteToon} color={corCabelo} />
         </mesh>
 
-        {/* Olhos expressivos olhando para o parceiro no centro */}
         <group position={[espelhado ? 0.04 : -0.04, 0, 0.35]}>
-          {/* Olho esquerdo */}
           <mesh position={[-0.14, 0, 0]}>
             <sphereGeometry args={[0.055, 12, 10]} />
             <meshBasicMaterial color="#1a1730" />
@@ -140,7 +120,6 @@ function Corpo({
             <meshBasicMaterial color="#ffffff" />
           </mesh>
 
-          {/* Olho direito */}
           <mesh position={[0.14, 0, 0]}>
             <sphereGeometry args={[0.055, 12, 10]} />
             <meshBasicMaterial color="#1a1730" />
@@ -152,18 +131,15 @@ function Corpo({
         </group>
       </group>
 
-      {/* Braço e mão/luva apontando para o centro (direção do empurrão) */}
       <group
         position={[espelhado ? 0.32 : -0.32, 0.82, 0.08]}
         rotation={[0, 0, espelhado ? -0.3 : 0.3]}
       >
-        {/* Manga */}
         <mesh position={[espelhado ? 0.16 : -0.16, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[0.09, 0.11, 0.38, 12]} />
           <meshToonMaterial gradientMap={gradienteToon} color={cor} />
           <Outlines thickness={2} color={OUTLINE_COR} />
         </mesh>
-        {/* Luva / Mãozinha arredondada */}
         <mesh position={[espelhado ? 0.36 : -0.36, 0, 0]}>
           <sphereGeometry args={[0.11, 12, 10]} />
           <meshToonMaterial gradientMap={gradienteToon} color={corLuva} />
@@ -229,7 +205,6 @@ function CenaConservacao({
   return (
     <group>
       <Piso cor={modo === 'explosao' ? '#d8d2ea' : '#d6ebf2'} tamanho={120} />
-      {/* pista de gelo / chão da bancada */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
         <planeGeometry args={[40, 7]} />
         <meshStandardMaterial
@@ -238,7 +213,6 @@ function CenaConservacao({
           metalness={modo === 'explosao' ? 0.1 : 0.3}
         />
       </mesh>
-      {/* linha do centro de massa (não se move: Q total continua zero) */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
         <planeGeometry args={[0.08, 7]} />
         <meshStandardMaterial color="#b3aacd" />
@@ -296,15 +270,14 @@ function Conceito() {
         <PainelConceito
           fase={fase}
           leituras={
-            <div className="grid grid-cols-2 gap-x-4 gap-y-5">
-              <Leitura rotulo="Q do corpo 1" valor={q1.toFixed(1)} unidade="kg·m/s" />
-              <Leitura rotulo="Q do corpo 2" valor={`−${q2.toFixed(1)}`} unidade="kg·m/s" />
-              <Leitura rotulo="v do corpo 2" valor={v2.toFixed(2)} unidade="m/s" destaque />
+            <div className="grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-papel p-3 shadow-leve">
+              <Leitura rotulo="Q corpo 1" valor={q1.toFixed(1)} unidade="kg·m/s" />
+              <Leitura rotulo="Q corpo 2" valor={`−${q2.toFixed(1)}`} unidade="kg·m/s" />
+              <Leitura rotulo="v corpo 2" valor={v2.toFixed(2)} unidade="m/s" destaque />
               <Leitura rotulo="Q total" valor={(q1 - q2).toFixed(1)} unidade="kg·m/s" />
             </div>
           }
         >
-          {/* Alternador de cenário */}
           <div className="flex gap-2">
             {(['patinadores', 'explosao'] as Modo[]).map((op) => (
               <button
@@ -323,13 +296,13 @@ function Conceito() {
                   }
                 }}
                 className={[
-                  'min-h-[44px] flex-1 rounded-xl px-3 font-titulo text-sm transition-colors duration-150',
+                  'min-h-[38px] flex-1 rounded-xl px-2.5 font-titulo text-xs sm:text-sm font-bold transition-colors',
                   modo === op
-                    ? 'bg-pigmento font-bold text-papel'
-                    : 'border border-linha bg-papel text-tintaFraca hover:border-pigmento hover:text-pigmento',
+                    ? 'bg-pigmento text-papel'
+                    : 'border border-linha bg-papel text-tintaFraca hover:text-pigmento',
                 ].join(' ')}
               >
-                {op === 'patinadores' ? 'Casal no gelo' : 'Explosão'}
+                {op === 'patinadores' ? 'Casal no Gelo' : 'Explosão'}
               </button>
             ))}
           </div>
@@ -359,7 +332,7 @@ function Conceito() {
             }}
           />
           <ControleSlider
-            rotulo="Velocidade do corpo 1"
+            rotulo="Velocidade corpo 1"
             valor={v1}
             min={modo === 'explosao' ? 10 : 0.1}
             max={modo === 'explosao' ? 120 : 2}
@@ -370,14 +343,14 @@ function Conceito() {
               setV1(v)
               reiniciar()
             }}
-            ajuda="A velocidade do corpo 2 não é escolhida: ela sai da conservação de Q."
+            ajuda="A velocidade do corpo 2 decorre da conservação de Q total = 0."
           />
 
           <div className="flex gap-2">
-            <Botao larguraTotal onClick={() => setRodando(true)} desabilitado={rodando}>
+            <Botao larguraTotal tamanho="md" onClick={() => setRodando(true)} desabilitado={rodando}>
               {modo === 'explosao' ? 'Explodir' : 'Empurrar'}
             </Botao>
-            <Botao variante="secundario" onClick={reiniciar}>
+            <Botao variante="secundario" tamanho="md" onClick={reiniciar}>
               Reiniciar
             </Botao>
           </div>
@@ -394,7 +367,7 @@ const RODADAS = [
     modo: 'patinadores' as Modo,
     titulo: 'Patinação no Gelo',
     descricao:
-      'O casal está parado no gelo e se empurra. O rapaz, de 70 kg, sai a 0,5 m/s. Qual a velocidade da moça, de 50 kg, para o Q total continuar zero?',
+      'Casal em repouso se empurra. Rapaz de 70 kg sai a 0,5 m/s. Ajuste a velocidade da moça de 50 kg para Q total continuar zero.',
     m1: 70,
     m2: 50,
     v1: 0.5,
@@ -410,7 +383,7 @@ const RODADAS = [
     modo: 'explosao' as Modo,
     titulo: 'Explosão da Bomba',
     descricao:
-      'Uma bomba parada se divide em dois fragmentos de 5 kg. Um deles sai a 70 m/s. Acerte a velocidade do outro.',
+      'Bomba em repouso se divide em dois fragmentos de 5 kg. Um sai a 70 m/s. Acerte a velocidade do outro.',
     m1: 5,
     m2: 5,
     v1: 70,
@@ -450,7 +423,7 @@ function Minijogo() {
           setV2(RODADAS[indice + 1].min)
           setRodando(false)
           setEstado('ajustando')
-        }, 2600)
+        }, 2200)
       } else if (!venceu) {
         setVenceu(true)
         concluirMinijogo(4)
@@ -478,24 +451,23 @@ function Minijogo() {
         </Palco3D>
       }
       sobreposicao={
-        <div className="rounded-xl bg-papel/95 px-4 py-2.5 text-center shadow-leve">
-          <span className="etiqueta">
-            Desafio {indice + 1} de {RODADAS.length}
-          </span>{' '}
-          <span className="font-titulo text-sm font-bold text-tinta">{r.titulo}</span>
+        <div className="rounded-xl border border-linha/80 bg-papel/90 px-3 py-1.5 text-center shadow-leve backdrop-blur-md">
+          <span className="etiqueta text-[10px]">
+            Desafio {indice + 1}/{RODADAS.length}: {r.titulo}
+          </span>
         </div>
       }
       painel={
         <>
           <div>
-            <TituloBloco passo="2.">{fase.minijogo}</TituloBloco>
-            <p className="mt-2 max-w-[52ch] text-base text-tinta">{r.descricao}</p>
+            <TituloBloco passo="2">{fase.minijogo}</TituloBloco>
+            <p className="mt-1 text-xs sm:text-sm text-tinta">{r.descricao}</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-4 gap-y-5 rounded-2xl bg-papel p-4 shadow-leve">
-            <Leitura rotulo="Corpo 1" valor={`${r.m1} kg · ${r.v1} m/s`} />
+          <div className="grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-papel p-3 shadow-leve">
+            <Leitura rotulo="Corpo 1" valor={`${r.m1}kg · ${r.v1}m/s`} />
             <Leitura rotulo="Corpo 2" valor={`${r.m2} kg`} />
-            <Leitura rotulo="Q do corpo 1" valor={(r.m1 * r.v1).toFixed(1)} unidade="kg·m/s" />
+            <Leitura rotulo="Q corpo 1" valor={(r.m1 * r.v1).toFixed(1)} unidade="kg·m/s" />
             <Leitura
               rotulo="Q total"
               valor={qTotal.toFixed(1)}
@@ -517,44 +489,39 @@ function Minijogo() {
               setEstado('ajustando')
               setRodando(false)
             }}
-            ajuda="Mire em Q total = 0. Se sobrar quantidade de movimento, o sistema não está conservado."
+            ajuda="Mire em Q total = 0. Ajuste v₂ = Q₁ ÷ m₂."
           />
 
           {!venceu && (
-            <Botao larguraTotal tamanho="lg" onClick={testar} desabilitado={rodando}>
-              {r.modo === 'explosao' ? 'Explodir' : 'Empurrar'}
+            <Botao larguraTotal tamanho="md" onClick={testar} desabilitado={rodando}>
+              {r.modo === 'explosao' ? 'Testar Explosão' : 'Testar Empurrão'}
             </Botao>
           )}
 
           {estado === 'erro' && (
-            <FaixaFeedback tipo="erro" titulo="O Q total não zerou">
-              <p className="font-mono text-sm leading-relaxed">
-                {r.m1} × {r.v1} = {(r.m1 * r.v1).toFixed(1)} kg·m/s de um lado.
-                <br />
-                {r.m2} × {v2.toFixed(r.decimais)} = {(r.m2 * v2).toFixed(1)} kg·m/s do outro.
-                <br />
-                Sobrou {qTotal.toFixed(1)} kg·m/s. Ajuste v₂ = Q₁ ÷ m₂.
+            <FaixaFeedback tipo="erro" titulo="Q total não zerou">
+              <p className="font-mono text-xs leading-relaxed">
+                {r.m1} × {r.v1} = {(r.m1 * r.v1).toFixed(1)} kg·m/s vs {r.m2} × {v2.toFixed(r.decimais)} = {(r.m2 * v2).toFixed(1)} kg·m/s.
               </p>
             </FaixaFeedback>
           )}
 
           {estado === 'acerto' && !venceu && (
-            <FaixaFeedback tipo="acerto" titulo="Conservado! Próximo desafio">
-              <p className="text-sm">Repare que os dois vetores têm o mesmo tamanho e sentidos opostos.</p>
+            <FaixaFeedback tipo="acerto" titulo="Conservado! Próximo">
+              <p className="text-xs">Vetores iguais em módulo e sentidos opostos.</p>
             </FaixaFeedback>
           )}
 
           {venceu && (
             <>
-              <FaixaFeedback tipo="acerto" titulo="Sistema isolado dominado">
-                <p className="font-mono text-sm leading-relaxed">
-                  Massas iguais → módulos de velocidade iguais e sentidos opostos: 70 m/s e −70 m/s.
-                  +20 pontos.
+              <FaixaFeedback tipo="acerto" titulo="Sistema Isolado Dominado!">
+                <p className="font-mono text-xs leading-relaxed">
+                  Massas iguais → velocidades iguais e sentidos opostos (70 m/s e −70 m/s). +20 pts.
                 </p>
               </FaixaFeedback>
               <Divisor />
-              <Botao larguraTotal tamanho="lg" onClick={avancarEtapa}>
-                Ir para o quiz →
+              <Botao larguraTotal tamanho="md" onClick={avancarEtapa}>
+                Ir para o Quiz →
               </Botao>
             </>
           )}
